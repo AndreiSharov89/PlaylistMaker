@@ -36,31 +36,6 @@
             />
     </LinearLayout>
 
-    <!--    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_61"
-            android:layout_marginTop="24dp"
-            android:orientation="horizontal"
-            >
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/dp_16"
-                android:layout_weight="1"
-                android:text="@string/dark_theme"
-                android:textColor="@color/YP_black"
-                android:textSize="@dimen/sp_16"
-                />
-
-            <Switch
-                android:layout_width="56dp"
-                android:layout_height="@dimen/dp_40"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="6dp"
-                />
-        </LinearLayout>-->
 
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="match_parent"
