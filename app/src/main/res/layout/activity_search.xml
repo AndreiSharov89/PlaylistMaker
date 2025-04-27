@@ -46,7 +46,7 @@
             <EditText
                 android:id="@+id/inputEditText"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="36dp"
                 android:layout_weight="1"
                 android:background="@drawable/edit_text_background"
                 android:drawableStart="@drawable/ic_search"
