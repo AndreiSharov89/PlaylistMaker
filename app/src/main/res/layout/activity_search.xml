@@ -1,11 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/search_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity"
+    android:background="?attr/colorSecondary"
+    android:orientation="vertical"
+    android:theme="@style/Theme.PlaylistMaker"
     >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        style="@style/LinearLayoutHeaderStyle"
+        android:theme="@style/Theme.PlaylistMaker"
+        >
+
+        <ImageView
+            android:id="@+id/btn_back"
+            style="@style/ImageBackButton"
+            />
+
+        <TextView
+            style="@style/TextViewHeaderStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/search"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="@dimen/dp_16"
+            android:background="@drawable/edit_text_background"
+            >
+
+            <EditText
+                android:id="@+id/inputEditText"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/edit_text_background"
+                android:drawableStart="@drawable/ic_search"
+                android:drawablePadding="10dp"
+                android:drawableTint="@color/text_gray"
+                android:fontFamily="@font/ys_display_regular"
+                android:hint="@string/search"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="13dp"
+                android:textColor="@color/YP_black"
+                android:textColorHint="@color/text_gray"
+                android:textCursorDrawable="@drawable/edit_text_cursor"
+                android:textFontWeight="400"
+                android:textSize="@dimen/sp_16"
+                android:theme="@style/Theme.PlaylistMaker"
+                tools:ignore="Autofill,RtlSymmetry"
+                />
+
+            <ImageView
+                android:id="@+id/clearIcon"
+                android:layout_width="@dimen/dp_16"
+                android:layout_height="@dimen/dp_16"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="12dp"
+                android:src="@drawable/ic_clear"
+                android:visibility="gone"
+                app:tint="@color/text_gray"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
