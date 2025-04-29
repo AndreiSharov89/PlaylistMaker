@@ -66,7 +66,7 @@ class SearchActivity : AppCompatActivity() {
 
         inputEditText.doOnTextChanged { text, _, _, _ ->
             clearButton.isVisible = text.toString().isNotEmpty()
-            searchString = text?.toString() ?: ""
+            searchString = text?.toString().orEmpty()
         }
 
 
