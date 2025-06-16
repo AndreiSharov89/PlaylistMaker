@@ -7,32 +7,27 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSecondary"
     android:orientation="vertical"
-    android:theme="@style/Theme.PlaylistMaker"
-    >
+    android:theme="@style/Theme.PlaylistMaker">
 
     <LinearLayout
         style="@style/LinearLayoutHeaderStyle"
-        android:theme="@style/Theme.PlaylistMaker"
-        >
+        android:theme="@style/Theme.PlaylistMaker">
 
         <ImageView
             android:id="@+id/btn_back"
-            style="@style/ImageBackButton"
-            />
+            style="@style/ImageBackButton" />
 
         <TextView
             style="@style/TextViewHeaderStyle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="@string/search"
-            />
+            android:text="@string/search" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,8 +35,7 @@
             android:layout_marginLeft="@dimen/dp_16"
             android:layout_marginTop="8dp"
             android:layout_marginRight="@dimen/dp_16"
-            android:background="@drawable/edit_text_background"
-            >
+            android:background="@drawable/edit_text_background">
 
             <EditText
                 android:id="@+id/inputEditText"
@@ -63,8 +57,7 @@
                 android:textFontWeight="400"
                 android:textSize="@dimen/sp_16"
                 android:theme="@style/Theme.PlaylistMaker"
-                tools:ignore="Autofill,RtlSymmetry"
-                />
+                tools:ignore="Autofill,RtlSymmetry" />
 
             <ImageView
                 android:id="@+id/clearIcon"
@@ -74,8 +67,17 @@
                 android:layout_marginRight="12dp"
                 android:src="@drawable/ic_clear"
                 android:visibility="gone"
-                app:tint="@color/text_gray"
-                />
+                app:tint="@color/text_gray" />
         </LinearLayout>
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTrack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_16"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="5"
+        tools:listitem="@layout/track_view" />
 </LinearLayout>
