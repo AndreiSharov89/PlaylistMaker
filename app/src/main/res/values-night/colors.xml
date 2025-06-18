@@ -13,5 +13,6 @@
     <color name="text_black">#FFFFFFFF</color>
     <color name="text_white">#1A1B22</color>
     <color name="text_gray">#1A1B22</color>
+    <color name="ic_gray">#FFFFFFFF</color>
     <color name="background_input_grey">#FFFFFFFF</color>
 </resources>
