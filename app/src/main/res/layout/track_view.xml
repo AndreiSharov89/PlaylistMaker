@@ -73,5 +73,5 @@
         android:layout_height="@dimen/dp_24"
         android:layout_gravity="center"
         android:layout_marginEnd="@dimen/dp_12"
-        app:srcCompat="@drawable/ic_forward" />
+        app:srcCompat="@drawable/ic_forward_arrow_24" />
 </LinearLayout>
