@@ -48,4 +48,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
+    implementation(libs.gson)
+    implementation(libs.converter.gson)
+    implementation(libs.retrofit)
+
 }
