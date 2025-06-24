@@ -12,4 +12,7 @@
     <string name="support_subj">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="support_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="eula_url">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="no_internet">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="refresh">Обновить</string>
 </resources>
