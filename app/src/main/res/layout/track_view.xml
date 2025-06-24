@@ -46,7 +46,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
+                android:maxEms="20"
                 android:maxLines="1"
+                android:singleLine="true"
                 tools:text="Artist Name" />
 
             <ImageView
@@ -61,9 +63,9 @@
                 style="@style/TextViewTrackInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
                 android:maxLines="1"
-                tools:text="Track Time" />
+                android:singleLine="true"
+                tools:text="3:05" />
         </LinearLayout>
     </LinearLayout>
 
