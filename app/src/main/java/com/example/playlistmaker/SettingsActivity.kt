@@ -44,7 +44,10 @@ class SettingsActivity : AppCompatActivity() {
         switch.thumbTintList = ContextCompat.getColorStateList(this, R.color.sw_thumb)
         switch.trackTintList = ContextCompat.getColorStateList(this, R.color.sw_track)
         switch.background = null
-
+        switch.isChecked = (applicationContext as App).darkTheme
+        switch.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
         val shareButton = findViewById<LinearLayout>(R.id.btn_share)
         shareButton.setOnClickListener {
             val message = getString(R.string.share_url)

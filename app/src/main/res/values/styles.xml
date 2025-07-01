@@ -114,4 +114,18 @@
         <item name="android:textColor">@color/text_white</item>
         <item name="cornerRadius">@dimen/dp_54</item>
     </style>
+
+    <style name="ClearHistoryButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:padding">@dimen/dp_6</item>
+        <item name="android:paddingStart">@dimen/dp_8</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:backgroundTint">@color/text_black</item>
+        <item name="android:textColor">@color/text_white</item>
+        <item name="cornerRadius">@dimen/dp_54</item>
+    </style>
 </resources>
