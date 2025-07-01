@@ -25,11 +25,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    companion object {
-        const val SEARCH_STRING = "SEARCH_STRING"
-        const val SEARCH = ""
-    }
-
     private lateinit var sharedPrefs: SharedPreferences
     private lateinit var history: SearchHistory
 
@@ -62,7 +57,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        sharedPrefs = getSharedPreferences("search_history", MODE_PRIVATE)
+        sharedPrefs = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
         history = SearchHistory(sharedPrefs)
 
         val rootView = findViewById<LinearLayout>(R.id.search_root_view)
@@ -244,5 +239,10 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         searchString = savedInstanceState.getString(SEARCH_STRING, SEARCH)
+    }
+    companion object {
+        const val SEARCH_STRING = "SEARCH_STRING"
+        const val SEARCH = ""
+        private const val HISTORY_KEY = "search_history"
     }
 }

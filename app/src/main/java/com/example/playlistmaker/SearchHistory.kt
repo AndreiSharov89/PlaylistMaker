@@ -8,15 +8,10 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
     private val gson = Gson()
 
-    companion object {
-        private const val HISTORY_KEY = "search_history"
-        private const val MAX_HISTORY_SIZE = 10
-    }
-
     fun getHistory(): List<Track> {
         val history = sharedPreferences.getString(HISTORY_KEY, null) ?: return emptyList()
         return try {
-            gson.fromJson(history, Array<Track>::class.java).toMutableList()
+            gson.fromJson(history, Array<Track>::class.java).toList()
         } catch (e: Exception) {
             emptyList()
         }
@@ -40,5 +35,9 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
         sharedPreferences.edit {
             putString(HISTORY_KEY, history)
         }
+    }
+    companion object {
+        private const val HISTORY_KEY = "search_history"
+        private const val MAX_HISTORY_SIZE = 10
     }
 }
