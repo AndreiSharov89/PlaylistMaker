@@ -11,19 +11,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.appcompat.widget.AppCompatImageButton
 
 class PlayerActivity : AppCompatActivity() {
-    companion object {
-        const val TRACK_DATA = "TrackData"
-    }
 
     private val track: Track by lazy {
-        val json = intent.getStringExtra(TRACK_DATA)
-        Gson().fromJson(json, object : TypeToken<Track>() {}.type)
+        intent.getParcelableExtra(TRACK_DATA, Track::class.java)!!
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +37,7 @@ class PlayerActivity : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        findViewById<androidx.appcompat.widget.AppCompatImageButton>(R.id.btnBack).setOnClickListener {
+        findViewById<AppCompatImageButton>(R.id.btnBack).setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
@@ -71,23 +66,23 @@ class PlayerActivity : AppCompatActivity() {
         ).format(track.trackTimeMillis)
 
         albumLabel.visibility = if (track.collectionName.isNullOrEmpty()) View.GONE
-            else View.VISIBLE
+        else View.VISIBLE
         albumView.visibility = albumLabel.visibility
         albumView.text = track.collectionName
 
         yearLabel.visibility = if (track.releaseDate.isNullOrEmpty()) View.GONE
-            else View.VISIBLE
+        else View.VISIBLE
         yearView.visibility = yearLabel.visibility
         yearView.text =
             (track.releaseDate ?: "").let { if (it.length >= 4) it.substring(0, 4) else it }
 
         genreLabel.visibility = if (track.primaryGenreName.isNullOrEmpty()) View.GONE
-            else View.VISIBLE
+        else View.VISIBLE
         genreView.visibility = genreLabel.visibility
         genreView.text = track.primaryGenreName
 
         countryLabel.visibility = if (track.country.isNullOrEmpty()) View.GONE
-            else View.VISIBLE
+        else View.VISIBLE
         countryView.visibility = countryLabel.visibility
         countryView.text = track.country
     }
@@ -104,4 +99,8 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun dpToPx(dp: Float): Int =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, dp, resources.displayMetrics).toInt()
+
+    companion object {
+        const val TRACK_DATA = "TrackData"
+    }
 }
