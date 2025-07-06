@@ -15,4 +15,5 @@
     <color name="text_gray">#1A1B22</color>
     <color name="ic_gray">#FFFFFFFF</color>
     <color name="background_input_grey">#FFFFFFFF</color>
+    <color name="btn_background_grey">#FFFFFF</color>>
 </resources>

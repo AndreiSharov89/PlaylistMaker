@@ -12,6 +12,7 @@ constraintlayout = "2.1.4"
 glide = "4.14.2"
 gson = "2.11.0"
 retrofit = "2.9.0"
+constraint = "2.12"
 
 
 [libraries]
