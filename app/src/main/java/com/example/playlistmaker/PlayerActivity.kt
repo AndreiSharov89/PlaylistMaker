@@ -74,7 +74,8 @@ class PlayerActivity : AppCompatActivity() {
         super.onDestroy()
         mediaPlayer.release()
         timerRunnable?.let {
-            mainThreadHandler?.removeCallbacks(it)
+            mainThreadHandler?.removeCallbacksAndMessages(it)
+            timerRunnable = null
         }
     }
 
@@ -138,13 +139,13 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
             play.setImageResource(R.drawable.ic_play_100)
-            timer.text = "00:00"
+            timer.text = formater.format(0)
             playerState = STATE_PREPARED
         }
         mediaPlayer.setOnCompletionListener {
             play.setImageResource(R.drawable.ic_play_100)
             mainThreadHandler?.removeCallbacksAndMessages(null)
-            timer.text = "00:00"
+            timer.text = formater.format(0)
             playerState = STATE_PREPARED
         }
     }
@@ -157,6 +158,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun pausePlayer() {
         mediaPlayer.pause()
+        timerRunnable = null
         play.setImageResource(R.drawable.ic_play_100)
         playerState = STATE_PAUSED
     }
@@ -169,20 +171,20 @@ class PlayerActivity : AppCompatActivity() {
 
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
-                mainThreadHandler?.post(updateTimer())
+                timerRunnable = createTimerRunnable()
+                mainThreadHandler?.post(timerRunnable!!)
             }
         }
     }
 
-    private fun updateTimer(): Runnable {
+    private fun createTimerRunnable(): Runnable {
         return object : Runnable {
             override fun run() {
                 if (playerState == STATE_PLAYING) {
                     timer.text = formater.format(mediaPlayer.currentPosition)
                     mainThreadHandler?.postDelayed(this, DELAY)
-
                 } else {
-                    mainThreadHandler?.removeCallbacks(this, DELAY)
+                    mainThreadHandler?.removeCallbacks(this)
                 }
             }
         }
@@ -190,10 +192,10 @@ class PlayerActivity : AppCompatActivity() {
 
     companion object {
         const val TRACK_DATA = "TrackData"
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-        const val DELAY = 200L
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY = 200L
     }
 }

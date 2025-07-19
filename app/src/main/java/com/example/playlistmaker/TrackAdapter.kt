@@ -50,6 +50,6 @@ class TrackAdapter(
     }
 
     companion object {
-        const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

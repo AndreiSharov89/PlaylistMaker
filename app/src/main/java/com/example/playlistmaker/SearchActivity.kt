@@ -59,7 +59,7 @@ class SearchActivity : AppCompatActivity() {
         .build()
     private val itunesAPI = retrofit.create(ItunesApi::class.java)
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { search() }
+    private var searchRunnable = Runnable { search() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -192,6 +192,11 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(searchRunnable)
+    }
+
     private fun search() {
         val query: String = sanitizeText(inputEditText.text.toString())
         if (query.isNotEmpty()) {
@@ -280,9 +285,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val SEARCH_STRING = "SEARCH_STRING"
-        const val SEARCH = ""
-        const val HISTORY_KEY = "search_history"
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val SEARCH_STRING = "SEARCH_STRING"
+        private const val SEARCH = ""
+        private const val HISTORY_KEY = "search_history"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }
