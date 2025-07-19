@@ -1,9 +1,12 @@
 package com.example.playlistmaker
 
-import android.net.Uri
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -14,12 +17,21 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.net.toUri
 
 class PlayerActivity : AppCompatActivity() {
 
     private val track: Track by lazy {
         intent.getParcelableExtra(TRACK_DATA, Track::class.java)!!
     }
+    private var mainThreadHandler: Handler? = null
+    private var timerRunnable: Runnable? = null
+    private lateinit var play: ImageView
+    private lateinit var timer: TextView
+    private var mediaPlayer = MediaPlayer()
+    private var playerState = STATE_DEFAULT
+    private val formater = SimpleDateFormat("mm:ss", Locale.getDefault())
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,9 +52,31 @@ class PlayerActivity : AppCompatActivity() {
         findViewById<AppCompatImageButton>(R.id.btnBack).setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        val url: String = track.previewUrl.toString()
+        play = findViewById(R.id.btnPlay)
+        timer = findViewById(R.id.tvTrackTimeCurrent)
+        mainThreadHandler = Handler(Looper.getMainLooper())
 
         bindTrackData(track)
         loadImage()
+        preparePlayer(url)
+        play.setOnClickListener {
+            playbackControl()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+        timerRunnable?.let {
+            mainThreadHandler?.removeCallbacksAndMessages(it)
+            timerRunnable = null
+        }
     }
 
     private fun bindTrackData(track: Track) {
@@ -91,7 +125,7 @@ class PlayerActivity : AppCompatActivity() {
         val coverUrl = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
         Glide.with(this)
-            .load(Uri.parse(coverUrl))
+            .load(coverUrl.toUri())
             .placeholder(R.drawable.track_placeholder_312)
             .transform(RoundedCorners(dpToPx(resources.getDimension(R.dimen.dp_8))))
             .into(findViewById(R.id.ivCover))
@@ -100,7 +134,68 @@ class PlayerActivity : AppCompatActivity() {
     private fun dpToPx(dp: Float): Int =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, dp, resources.displayMetrics).toInt()
 
+    private fun preparePlayer(url: String) {
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            play.setImageResource(R.drawable.ic_play_100)
+            timer.text = formater.format(0)
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            play.setImageResource(R.drawable.ic_play_100)
+            mainThreadHandler?.removeCallbacksAndMessages(null)
+            timer.text = formater.format(0)
+            playerState = STATE_PREPARED
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        play.setImageResource(R.drawable.ic_pause_100)
+        playerState = STATE_PLAYING
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        timerRunnable = null
+        play.setImageResource(R.drawable.ic_play_100)
+        playerState = STATE_PAUSED
+    }
+
+    private fun playbackControl() {
+        when (playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+                timerRunnable = createTimerRunnable()
+                mainThreadHandler?.post(timerRunnable!!)
+            }
+        }
+    }
+
+    private fun createTimerRunnable(): Runnable {
+        return object : Runnable {
+            override fun run() {
+                if (playerState == STATE_PLAYING) {
+                    timer.text = formater.format(mediaPlayer.currentPosition)
+                    mainThreadHandler?.postDelayed(this, DELAY)
+                } else {
+                    mainThreadHandler?.removeCallbacks(this)
+                }
+            }
+        }
+    }
+
     companion object {
         const val TRACK_DATA = "TrackData"
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+        private const val DELAY = 200L
     }
 }
