@@ -48,13 +48,13 @@
         android:layout_height="@dimen/dp_32"
         android:layout_marginStart="@dimen/dp_16"
         android:tag="tvTrackCountry"
-        tools:text="Великобритания"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/bottomGuideLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@id/tvTrackLengthLabel"
-        app:layout_goneMarginTop="@dimen/dp_32" />
+        app:layout_goneMarginTop="@dimen/dp_32"
+        tools:text="Великобритания" />
 
     <TextView
         android:id="@+id/tvTrackGenreLabel"
@@ -76,13 +76,13 @@
         android:layout_height="@dimen/dp_32"
         android:layout_marginStart="@dimen/dp_16"
         android:tag="tvTrackGenre"
-        tools:text="Рок"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/tvTrackCountry"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@id/tvTrackLengthLabel"
-        app:layout_goneMarginTop="@dimen/dp_32" />
+        app:layout_goneMarginTop="@dimen/dp_32"
+        tools:text="Рок" />
 
     <TextView
         android:id="@+id/tvTrackYearLabel"
@@ -104,13 +104,13 @@
         android:layout_height="@dimen/dp_32"
         android:layout_marginStart="@dimen/dp_16"
         android:tag="tvTrackYear"
-        tools:text="1965"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/tvTrackGenre"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@id/tvTrackLengthLabel"
-        app:layout_goneMarginTop="@dimen/dp_32" />
+        app:layout_goneMarginTop="@dimen/dp_32"
+        tools:text="1965" />
 
     <TextView
         android:id="@+id/tvTrackAlbumLabel"
@@ -132,13 +132,13 @@
         android:layout_height="@dimen/dp_32"
         android:layout_marginStart="@dimen/dp_16"
         android:tag="tvTrackAlbum"
-        tools:text="Yesterday (Remastered 2009) Yesterday (Remastered 2009) Yesterday (Remastered 2009)"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/tvTrackYear"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@id/tvTrackAlbumLabel"
-        app:layout_goneMarginTop="@dimen/dp_32" />
+        app:layout_goneMarginTop="@dimen/dp_32"
+        tools:text="Yesterday (Remastered 2009) Yesterday (Remastered 2009) Yesterday (Remastered 2009)" />
 
     <TextView
         android:id="@+id/tvTrackLengthLabel"
@@ -159,12 +159,12 @@
         android:layout_height="@dimen/dp_32"
         android:layout_marginStart="@dimen/dp_16"
         android:tag="tvTrackLength"
-        tools:text="5:35"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/tvTrackAlbum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@id/tvTrackLengthLabel" />
+        app:layout_constraintStart_toEndOf="@id/tvTrackLengthLabel"
+        tools:text="5:35" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/bottomGuideLineOther"
@@ -179,7 +179,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:gravity="center"
-        android:text="0:00"
+        android:text="00:00"
         android:textColor="@color/text_black"
         app:layout_constraintBottom_toTopOf="@id/bottomGuideLineOther"
         app:layout_constraintEnd_toEndOf="@id/rightGuideline"
