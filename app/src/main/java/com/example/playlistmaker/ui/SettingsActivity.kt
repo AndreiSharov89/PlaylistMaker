@@ -1,21 +1,25 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.materialswitch.MaterialSwitch
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.PrefsKeys
+import com.example.playlistmaker.R
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+    private val sharedPrefs by lazy {
+        Creator.provideSharedPreferences(PrefsKeys.THEME)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -44,9 +48,16 @@ class SettingsActivity : AppCompatActivity() {
         switch.thumbTintList = ContextCompat.getColorStateList(this, R.color.sw_thumb)
         switch.trackTintList = ContextCompat.getColorStateList(this, R.color.sw_track)
         switch.background = null
-        switch.isChecked = (applicationContext as App).darkTheme
-        switch.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
+        switch.isChecked = sharedPrefs.getBoolean(PrefsKeys.THEME, false)
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            sharedPrefs.edit().putBoolean(PrefsKeys.THEME, isChecked).apply()
+
+            AppCompatDelegate.setDefaultNightMode(
+                if (isChecked)
+                    AppCompatDelegate.MODE_NIGHT_YES
+                else
+                    AppCompatDelegate.MODE_NIGHT_NO
+            )
         }
         val shareButton = findViewById<LinearLayout>(R.id.btn_share)
         shareButton.setOnClickListener {
