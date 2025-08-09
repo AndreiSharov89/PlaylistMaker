@@ -11,14 +11,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.PrefsKeys
 import com.example.playlistmaker.R
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
-    private val sharedPrefs by lazy {
-        Creator.provideSharedPreferences(PrefsKeys.THEME)
-    }
+    private val themeInteractor by lazy { Creator.provideThemeInteractor() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +45,9 @@ class SettingsActivity : AppCompatActivity() {
         switch.thumbTintList = ContextCompat.getColorStateList(this, R.color.sw_thumb)
         switch.trackTintList = ContextCompat.getColorStateList(this, R.color.sw_track)
         switch.background = null
-        switch.isChecked = sharedPrefs.getBoolean(PrefsKeys.THEME, false)
+        switch.isChecked = themeInteractor.isDarkThemeEnabled()
         switch.setOnCheckedChangeListener { _, isChecked ->
-            sharedPrefs.edit().putBoolean(PrefsKeys.THEME, isChecked).apply()
-
+            themeInteractor.setDarkThemeEnabled(isChecked)
             AppCompatDelegate.setDefaultNightMode(
                 if (isChecked)
                     AppCompatDelegate.MODE_NIGHT_YES

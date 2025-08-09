@@ -1,6 +1,5 @@
 package com.example.playlistmaker.ui
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -29,8 +28,6 @@ import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.TrackAdapter
 
 class SearchActivity : AppCompatActivity() {
-
-    private lateinit var sharedPrefs: SharedPreferences
     private var history = Creator.provideHistoryInteractor()
 
     private lateinit var trackRecycler: RecyclerView
@@ -58,8 +55,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
-        sharedPrefs = getSharedPreferences(HISTORY_KEY, MODE_PRIVATE)
 
         val rootView = findViewById<LinearLayout>(R.id.search_root_view)
         btnBack = findViewById(R.id.btn_back)
@@ -266,7 +261,6 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val SEARCH_STRING = "SEARCH_STRING"
         private const val SEARCH = ""
-        private const val HISTORY_KEY = "search_history"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }
