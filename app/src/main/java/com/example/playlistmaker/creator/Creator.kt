@@ -1,8 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.creator
 
 import android.app.Application
 import android.content.Context
 import android.media.MediaPlayer
+import com.example.playlistmaker.PrefsKeys
 import com.example.playlistmaker.data.HistoryRepositoryImpl
 import com.example.playlistmaker.data.TrackSearchRepositoryImpl
 import com.example.playlistmaker.data.network.RetrofitNetworkClient

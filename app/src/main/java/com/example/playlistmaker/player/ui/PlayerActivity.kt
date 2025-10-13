@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
 import android.os.Handler
@@ -13,8 +13,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.interactors.PlayerInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.PlayerState

@@ -6,7 +6,7 @@ import android.os.Looper
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerActivity
 
 class TrackAdapter(
     private var data: List<Track> = listOf(),

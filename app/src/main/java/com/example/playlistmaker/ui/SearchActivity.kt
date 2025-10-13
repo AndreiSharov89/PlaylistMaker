@@ -21,8 +21,8 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.interactors.TrackSearchInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.presentation.TrackAdapter
