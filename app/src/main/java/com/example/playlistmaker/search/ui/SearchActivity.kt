@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker.search.ui
 
 import android.os.Bundle
 import android.os.Handler
@@ -25,7 +25,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.interactors.TrackSearchInteractor
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.presentation.TrackAdapter
 
 class SearchActivity : AppCompatActivity() {
     private var history = Creator.provideHistoryInteractor()

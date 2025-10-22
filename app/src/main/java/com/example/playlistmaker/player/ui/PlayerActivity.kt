@@ -17,7 +17,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.domain.interactors.PlayerInteractor
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.presentation.PlayerState
+import com.example.playlistmaker.player.domain.PlayerState
 import java.text.SimpleDateFormat
 import java.util.Locale
 

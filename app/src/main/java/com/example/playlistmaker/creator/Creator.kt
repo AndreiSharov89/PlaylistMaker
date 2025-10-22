@@ -8,19 +8,25 @@ import com.example.playlistmaker.data.HistoryRepositoryImpl
 import com.example.playlistmaker.data.TrackSearchRepositoryImpl
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.player.PlayerMediaPlayer
-import com.example.playlistmaker.data.settings.ThemeRepositoryImpl
 import com.example.playlistmaker.domain.impl.HistoryInteractorImpl
 import com.example.playlistmaker.domain.impl.PlayerInteractorImpl
-import com.example.playlistmaker.domain.impl.ThemeInteractorImpl
 import com.example.playlistmaker.domain.impl.TrackSearchInteractorImpl
 import com.example.playlistmaker.domain.interactors.HistoryInteractor
 import com.example.playlistmaker.domain.interactors.PlayerInteractor
-import com.example.playlistmaker.domain.interactors.ThemeInteractor
 import com.example.playlistmaker.domain.interactors.TrackSearchInteractor
 import com.example.playlistmaker.domain.repositories.PlayerRepository
 import com.example.playlistmaker.domain.repositories.SearchHistoryRepository
-import com.example.playlistmaker.domain.repositories.ThemeRepository
 import com.example.playlistmaker.domain.repositories.TrackSearchRepository
+import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
+import com.example.playlistmaker.settings.domain.SettingsInteractor
+import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
+import com.example.playlistmaker.settings.domain.SettingsRepository
+import com.example.playlistmaker.sharing.data.ExternalNavigatorImpl
+import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
+import com.example.playlistmaker.sharing.domain.ExternalNavigatorRepository
+import com.example.playlistmaker.sharing.domain.SharingInteractor
+import com.example.playlistmaker.sharing.domain.SharingInteractorImpl
+import com.example.playlistmaker.sharing.domain.SharingRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -62,14 +68,14 @@ object Creator {
         return PlayerInteractorImpl(getPlayerRepository())
     }
 
-    private fun getThemeRepository(): ThemeRepository {
+    private fun getSettingsRepository(): SettingsRepository {
         val sharedPreferences =
             application.getSharedPreferences(PrefsKeys.THEME, Context.MODE_PRIVATE)
-        return ThemeRepositoryImpl(sharedPreferences)
+        return SettingsRepositoryImpl(sharedPreferences)
     }
 
-    fun provideThemeInteractor(): ThemeInteractor {
-        return ThemeInteractorImpl(getThemeRepository())
+    fun provideSettingsInteractor(): SettingsInteractor {
+        return SettingsInteractorImpl(getSettingsRepository())
     }
 
     private fun getHistoryRepository(): SearchHistoryRepository {
@@ -80,6 +86,20 @@ object Creator {
 
     fun provideHistoryInteractor(): HistoryInteractor {
         return HistoryInteractorImpl(getHistoryRepository())
+    }
+    fun provideSharingInteractor(): SharingInteractor {
+        return SharingInteractorImpl(
+            externalNavigator = getExternalNavigator(),
+            sharingRepository = getSharingRepository()
+        )
+    }
+
+    private fun getSharingRepository(): SharingRepository {
+        return SharingRepositoryImpl(application)
+    }
+
+    private fun getExternalNavigator(): ExternalNavigatorRepository {
+        return ExternalNavigatorImpl(application)
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui
+package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
@@ -9,7 +9,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         Creator.initApplication(this)
-        val isDarkTheme = Creator.provideThemeInteractor().isDarkThemeEnabled()
+        val isDarkTheme = Creator.provideSettingsInteractor().isDarkThemeEnabled()
 
         AppCompatDelegate.setDefaultNightMode(
             if (isDarkTheme)

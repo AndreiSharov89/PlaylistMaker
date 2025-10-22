@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.search.ui
 
 import android.content.Intent
 import android.os.Handler

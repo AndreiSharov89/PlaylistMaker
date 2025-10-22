@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.player.domain
 
 sealed class PlayerState {
     object Default : PlayerState()
