@@ -1,8 +1,4 @@
-package com.example.playlistmaker.domain.impl
-
-import com.example.playlistmaker.domain.interactors.HistoryInteractor
-import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.domain.repositories.SearchHistoryRepository
+package com.example.playlistmaker.search.domain
 
 class HistoryInteractorImpl(
     private val repository: SearchHistoryRepository

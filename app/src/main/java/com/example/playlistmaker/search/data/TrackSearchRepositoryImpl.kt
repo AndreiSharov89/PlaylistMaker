@@ -1,10 +1,8 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.search.data
 
-import com.example.playlistmaker.data.dto.TrackSearchRequest
-import com.example.playlistmaker.data.dto.TrackSearchResponse
-import com.example.playlistmaker.domain.interactors.TrackSearchInteractor
-import com.example.playlistmaker.domain.repositories.TrackSearchRepository
-import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.search.domain.TrackSearchInteractor
+import com.example.playlistmaker.search.domain.TrackSearchRepository
+import com.example.playlistmaker.search.domain.Track
 
 class TrackSearchRepositoryImpl(private val networkClient: NetworkClient) : TrackSearchRepository {
     override fun searchTrack(expression: String): TrackSearchInteractor.Resource<List<Track>> {

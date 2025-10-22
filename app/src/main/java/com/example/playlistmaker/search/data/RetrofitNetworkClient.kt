@@ -1,8 +1,5 @@
-package com.example.playlistmaker.data.network
+package com.example.playlistmaker.search.data
 
-import com.example.playlistmaker.data.NetworkClient
-import com.example.playlistmaker.data.dto.Response
-import com.example.playlistmaker.data.dto.TrackSearchRequest
 import retrofit2.Retrofit
 
 class RetrofitNetworkClient(private val retrofit: Retrofit) : NetworkClient {

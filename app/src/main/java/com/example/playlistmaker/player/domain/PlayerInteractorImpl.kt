@@ -1,7 +1,4 @@
-package com.example.playlistmaker.domain.impl
-
-import com.example.playlistmaker.domain.interactors.PlayerInteractor
-import com.example.playlistmaker.domain.repositories.PlayerRepository
+package com.example.playlistmaker.player.domain
 
 class PlayerInteractorImpl(
     private val repository: PlayerRepository

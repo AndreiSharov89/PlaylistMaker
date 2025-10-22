@@ -1,9 +1,9 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.search.data
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.domain.repositories.SearchHistoryRepository
+import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.search.domain.SearchHistoryRepository
 import com.google.gson.Gson
 
 class HistoryRepositoryImpl(

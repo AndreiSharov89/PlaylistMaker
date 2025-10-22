@@ -1,4 +1,4 @@
-package com.example.playlistmaker.data.dto
+package com.example.playlistmaker.search.data
 
 data class TrackSearchResponse(val searchType: String,
                                val expression: String,

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain.repositories
+package com.example.playlistmaker.player.domain
 
 interface PlayerRepository {
     fun preparePlayer(url: String, onReady: () -> Unit, onCompletion: () -> Unit)
