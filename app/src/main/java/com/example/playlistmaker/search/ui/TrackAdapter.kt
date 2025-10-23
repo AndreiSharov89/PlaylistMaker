@@ -1,57 +1,30 @@
 package com.example.playlistmaker.search.ui
 
-import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.search.domain.Track
-import com.example.playlistmaker.player.ui.PlayerActivity
 
 class TrackAdapter(
-    private var data: List<Track> = listOf(),
-    private val onItemClick: (Track) -> Unit
+    private val clickListener: TrackClickListener
 ) : RecyclerView.Adapter<TrackViewHolder>() {
-    private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        return TrackViewHolder.create(parent)
-    }
+    var tracks = ArrayList<Track>()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder =
+        TrackViewHolder.from(parent)
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        val track = data[position]
+        val track = tracks[position]
         holder.bind(track)
         holder.itemView.setOnClickListener {
-            if (clickDebounce()) {
-                onItemClick(track)
-                val context = holder.itemView.context
-                val intent = Intent(context, PlayerActivity::class.java)
-                intent.putExtra(PlayerActivity.TRACK_DATA, track)
-                context.startActivity(intent)
-            }
+            clickListener.onTrackClick(track)
         }
-
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return tracks.size
     }
 
-    fun setTracks(tracks: List<Track>) {
-        data = tracks
-        notifyDataSetChanged()
+    fun interface TrackClickListener {
+        fun onTrackClick(track: Track)
     }
 
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
 }

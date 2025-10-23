@@ -8,39 +8,34 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.search.domain.TrackSearchInteractor
+import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.search.domain.TrackSearchInteractor
 
 class SearchActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySearchBinding
     private var history = Creator.provideHistoryInteractor()
 
-    private lateinit var trackRecycler: RecyclerView
-    private lateinit var historyRecycler: RecyclerView
+    /*    private lateinit var trackRecycler: RecyclerView
+        private lateinit var historyRecycler: RecyclerView
 
-    private lateinit var inputEditText: EditText
-    private lateinit var clearButton: ImageView
-    private lateinit var imageError: ImageView
-    private lateinit var placeholderMessage: TextView
-    private lateinit var refresh: Button
-    private lateinit var btnBack: ImageView
-    private lateinit var historySection: LinearLayout
-    private lateinit var clearHistoryButton: Button
-    private lateinit var progressBar: ProgressBar
+        private lateinit var inputEditText: EditText
+        private lateinit var clearButton: ImageView
+        private lateinit var imageError: ImageView
+        private lateinit var placeholderMessage: TextView
+        private lateinit var refresh: Button
+        private lateinit var btnBack: ImageView
+        private lateinit var historySection: LinearLayout
+        private lateinit var clearHistoryButton: Button
+        private lateinit var progressBar: ProgressBar*/
 
     private val tracks = ArrayList<Track>()
     private lateinit var adapter: TrackAdapter
@@ -53,23 +48,23 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val rootView = findViewById<LinearLayout>(R.id.search_root_view)
-        btnBack = findViewById(R.id.btn_back)
-        inputEditText = findViewById(R.id.inputEditText)
-        clearButton = findViewById(R.id.clearIcon)
-        imageError = findViewById(R.id.iv_Error)
-        placeholderMessage = findViewById(R.id.tv_Error)
-        refresh = findViewById(R.id.btn_refresh)
-        trackRecycler = findViewById(R.id.rvTrack)
-        historyRecycler = findViewById(R.id.rv_searchHistory)
-        historySection = findViewById(R.id.searchHistorySection)
-        clearHistoryButton = findViewById(R.id.btn_clear_history)
-        progressBar = findViewById(R.id.progressBar)
+        /*        btnBack = findViewById(R.id.btn_back)
+                inputEditText = findViewById(R.id.inputEditText)
+                clearButton = findViewById(R.id.clearIcon)
+                imageError = findViewById(R.id.iv_Error)
+                placeholderMessage = findViewById(R.id.tv_Error)
+                refresh = findViewById(R.id.btn_refresh)
+                trackRecycler = findViewById(R.id.rvTrack)
+                historyRecycler = findViewById(R.id.rv_searchHistory)
+                historySection = findViewById(R.id.searchHistorySection)
+                clearHistoryButton = findViewById(R.id.btn_clear_history)
+                progressBar = findViewById(R.id.progressBar)*/
         searchInteractor = Creator.provideTrackSearchInteractor()
 
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(
                 systemBars.left,
@@ -80,7 +75,7 @@ class SearchActivity : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
-        inputEditText.addTextChangedListener(object : TextWatcher {
+        binding.inputEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
@@ -95,7 +90,7 @@ class SearchActivity : AppCompatActivity() {
 
         if (savedInstanceState != null) {
             searchString = savedInstanceState.getString(SEARCH_STRING, SEARCH)
-            inputEditText.setText(searchString)
+            binding.inputEditText.setText(searchString)
         }
 
         adapter = TrackAdapter(tracks) { track ->
@@ -114,8 +109,8 @@ class SearchActivity : AppCompatActivity() {
         historyRecycler.layoutManager = LinearLayoutManager(this)
         historyRecycler.adapter = historyAdapter
 
-        clearButton.setOnClickListener {
-            inputEditText.setText("")
+        binding.btnClearHistory.setOnClickListener {
+            binding.inputEditText.setText("")
             hideKeyboard()
             tracks.clear()
             adapter.notifyDataSetChanged()
@@ -130,20 +125,20 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        refresh.setOnClickListener {
+        binding.btnRefresh.setOnClickListener {
             search()
         }
 
-        btnBack.setOnClickListener {
+        binding.btnBack.setOnClickListener {
             finish()
         }
 
-        inputEditText.post {
-            inputEditText.requestFocus()
+        binding.inputEditText.post {
+            binding.inputEditText.requestFocus()
         }
 
-        inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && inputEditText.text.isEmpty()) {
+        binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.inputEditText.text.isEmpty()) {
                 val historyTracks = history.getHistory()
                 if (historyTracks.isNotEmpty()) {
                     historyAdapter.setTracks(historyTracks)
@@ -174,6 +169,47 @@ class SearchActivity : AppCompatActivity() {
                 true
             } else {
                 false
+            }
+        }
+    }
+
+    private fun render(state: SearchState) {
+        binding.progressBar.isVisible = false
+        binding.rvTrack.isVisible = false
+        binding.searchHistorySection.isVisible = false
+        binding.iv_Error.isVisible = false
+
+        when (state) {
+            is SearchState.Loading -> {
+                binding.progressBar.isVisible = true
+            }
+
+            is SearchState.Content -> {
+                binding.rvTrack.isVisible = true
+                trackAdapter.tracks = ArrayList(state.tracks)
+                trackAdapter.notifyDataSetChanged()
+            }
+
+            is SearchState.Error -> {
+                binding.ivError.isVisible = true
+                binding.ivError.setImageResource(R.drawable.image_no_internet)
+                binding.tvError.text = getString(state.messageResId)
+                binding.btnRefresh.isVisible = true
+            }
+
+            is SearchState.Empty -> {
+                binding.ivError.isVisible = true
+                binding.ivError.setImageResource(R.drawable.image_nothing_found)
+                binding.tvError.text = getString(R.string.nothing_found)
+                binding.btnRefresh.isVisible = false
+            }
+
+            is SearchState.History -> {
+                if (state.tracks.isNotEmpty()) {
+                    binding.searchHistorySection.isVisible = true
+                    historyAdapter.tracks = ArrayList(state.tracks)
+                    historyAdapter.notifyDataSetChanged()
+                }
             }
         }
     }
