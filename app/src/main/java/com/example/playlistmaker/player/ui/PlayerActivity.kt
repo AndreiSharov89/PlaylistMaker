@@ -2,11 +2,11 @@ package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -23,7 +23,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private val viewModel: PlayerViewModel by viewModels {
-        PlayerViewModel.getFactory(track.previewUrl ?: "", track.artworkUrl100 ?: "")
+        PlayerViewModel.getFactory(track.previewUrl ?: "", track.artworkUrl100 )
     }
 
     private lateinit var binding: ActivityPlayerBinding
@@ -93,22 +93,22 @@ class PlayerActivity : AppCompatActivity() {
 
         binding.tvTrackAlbum.apply {
             text = track.collectionName
-            visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
+            isVisible = !text.isNullOrEmpty()
         }
 
         binding.tvTrackYear.apply {
-            text = track.releaseDate?.take(4) ?: ""
-            visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
+            text = track.releaseDate?.take(4).orEmpty()
+            isVisible = text.isNotEmpty()
         }
 
         binding.tvTrackGenre.apply {
             text = track.primaryGenreName
-            visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
+            isVisible = !text.isNullOrEmpty()
         }
 
         binding.tvTrackCountry.apply {
             text = track.country
-            visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
+            isVisible = !text.isNullOrEmpty()
         }
     }
 

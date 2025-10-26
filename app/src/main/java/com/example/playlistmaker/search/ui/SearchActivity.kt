@@ -105,50 +105,77 @@ class SearchActivity : AppCompatActivity() {
     }
 
 
-    private fun render(state: SearchState) {
-        binding.progressBar.isVisible = false
-        binding.rvTrack.isVisible = false
-        binding.searchHistorySection.isVisible = false
-        binding.ivError.isVisible = false
-
+    private fun render(state: SearchState) = with(binding) {
         when (state) {
+
             is SearchState.Loading -> {
-                binding.progressBar.isVisible = true
+                progressBar.isVisible = true
+                rvTrack.isVisible = false
+                searchHistorySection.isVisible = false
+                ivError.isVisible = false
+                tvError.isVisible = false
+                btnRefresh.isVisible = false
             }
 
             is SearchState.Content -> {
-                binding.rvTrack.isVisible = true
+                progressBar.isVisible = false
+                rvTrack.isVisible = true
+                searchHistorySection.isVisible = false
+                ivError.isVisible = false
+                tvError.isVisible = false
+                btnRefresh.isVisible = false
+
                 adapter.tracks = ArrayList(state.tracks)
                 adapter.notifyDataSetChanged()
             }
 
             is SearchState.Error -> {
-                binding.ivError.isVisible = true
-                binding.ivError.setImageResource(R.drawable.image_no_internet)
-                binding.tvError.text = getString(R.string.no_internet)
-                binding.btnRefresh.isVisible = true
+                progressBar.isVisible = false
+                rvTrack.isVisible = false
+                searchHistorySection.isVisible = false
+                ivError.isVisible = true
+                tvError.isVisible = true
+                btnRefresh.isVisible = true
+
+                ivError.setImageResource(R.drawable.image_no_internet)
+                tvError.text = getString(R.string.no_internet)
             }
 
             is SearchState.Empty -> {
-                binding.ivError.isVisible = true
-                binding.ivError.setImageResource(R.drawable.image_nothing_found)
-                binding.tvError.text = getString(R.string.nothing_found)
-                binding.btnRefresh.isVisible = false
+                progressBar.isVisible = false
+                rvTrack.isVisible = false
+                searchHistorySection.isVisible = false
+                ivError.isVisible = true
+                tvError.isVisible = true
+                btnRefresh.isVisible = false
+
+                ivError.setImageResource(R.drawable.image_nothing_found)
+                tvError.text = getString(R.string.nothing_found)
             }
 
             is SearchState.History -> {
+                progressBar.isVisible = false
+                rvTrack.isVisible = false
+                ivError.isVisible = false
+                tvError.isVisible = false
+                btnRefresh.isVisible = false
+
                 if (state.tracks.isNotEmpty()) {
-                    binding.searchHistorySection.isVisible = true
+                    searchHistorySection.isVisible = true
                     historyAdapter.tracks = ArrayList(state.tracks)
                     historyAdapter.notifyDataSetChanged()
+                } else {
+                    searchHistorySection.isVisible = false
                 }
             }
 
             is SearchState.EmptyHistory -> {
-                binding.progressBar.isVisible = false
-                binding.rvTrack.isVisible = false
-                binding.searchHistorySection.isVisible = false
-                binding.ivError.isVisible = false
+                progressBar.isVisible = false
+                rvTrack.isVisible = false
+                searchHistorySection.isVisible = false
+                ivError.isVisible = false
+                tvError.isVisible = false
+                btnRefresh.isVisible = false
             }
         }
     }
@@ -168,10 +195,6 @@ class SearchActivity : AppCompatActivity() {
         savedInstanceState?.getString(SEARCH_STRING).orEmpty()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.showHistory()
-    }
 
     companion object {
         private const val SEARCH_STRING = "SEARCH_STRING"
