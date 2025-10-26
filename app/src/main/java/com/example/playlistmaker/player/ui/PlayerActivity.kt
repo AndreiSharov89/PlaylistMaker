@@ -11,8 +11,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.player.domain.PlayerState
+import com.example.playlistmaker.search.domain.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -23,7 +23,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private val viewModel: PlayerViewModel by viewModels {
-        PlayerViewModel.getFactory(track.previewUrl ?: "")
+        PlayerViewModel.getFactory(track.previewUrl ?: "", track.artworkUrl100 ?: "")
     }
 
     private lateinit var binding: ActivityPlayerBinding
@@ -49,7 +49,14 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         bindTrackData(track)
-        loadImage()
+
+        viewModel.observeCoverLiveData.observe(this) { url ->
+            Glide.with(this)
+                .load(url)
+                .placeholder(R.drawable.track_placeholder_312)
+                .transform(RoundedCorners(dpToPx(resources.getDimension(R.dimen.dp_8))))
+                .into(binding.ivCover)
+        }
 
         viewModel.playerStateObserver.observe(this) { state ->
             updatePlayButton(state)
@@ -105,19 +112,11 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadImage() {
-        val coverUrl = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-        Glide.with(this)
-            .load(coverUrl)
-            .placeholder(R.drawable.track_placeholder_312)
-            .transform(RoundedCorners(dpToPx(resources.getDimension(R.dimen.dp_8))))
-            .into(binding.ivCover)
-    }
 
     private fun dpToPx(dp: Float): Int =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, dp, resources.displayMetrics).toInt()
 
     companion object {
-        const val TRACK_DATA = "TrackData"
+        const val TRACK_DATA = "track"
     }
 }

@@ -17,9 +17,7 @@ class TrackViewHolder(private val binding: TrackViewBinding) :
     fun bind(item: Track) {
         binding.tvTrackName.text = item.trackName
         binding.tvArtistName.text = item.artistName
-        binding.tvTrackTime.text = SimpleDateFormat(
-            "mm:ss",
-            Locale.getDefault()).format(item.trackTimeMillis)
+        binding.tvTrackTime.text = dateFormat.format(item.trackTimeMillis)
         Glide.with(itemView)
             .load(item.artworkUrl100)
             .placeholder(R.drawable.track_placeholder_45)
@@ -29,10 +27,13 @@ class TrackViewHolder(private val binding: TrackViewBinding) :
     }
 
     companion object {
+        private val dateFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+
         fun from(parent: ViewGroup): TrackViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = TrackViewBinding.inflate(inflater, parent, false)
             return TrackViewHolder(binding)
         }
     }
+
 }

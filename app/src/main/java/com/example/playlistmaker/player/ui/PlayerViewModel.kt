@@ -14,8 +14,11 @@ import com.example.playlistmaker.player.domain.PlayerState
 
 class PlayerViewModel(
     private val previewUrl: String,
+    private val coverUrl: String,
     private val player: PlayerInteractor
 ) : ViewModel() {
+    private val coverLiveData = MutableLiveData<String>()
+    val observeCoverLiveData: LiveData<String> = coverLiveData
 
     private val playerState = MutableLiveData<PlayerState>(PlayerState.Default)
     val playerStateObserver: LiveData<PlayerState> = playerState
@@ -35,6 +38,7 @@ class PlayerViewModel(
     }
 
     init {
+        prepareCoverUrl(coverUrl)
         preparePlayer()
     }
 
@@ -51,6 +55,10 @@ class PlayerViewModel(
                 timerText.postValue("00:00")
             }
         )
+    }
+    private fun prepareCoverUrl(artworkUrl: String) {
+        val highResUrl = artworkUrl.replaceAfterLast('/', "512x512bb.jpg")
+        coverLiveData.postValue(highResUrl)
     }
 
     fun onPlayButtonClicked() {
@@ -95,10 +103,12 @@ class PlayerViewModel(
     companion object {
         private const val DELAY = 200L
 
-        fun getFactory(previewUrl: String): ViewModelProvider.Factory = viewModelFactory {
+        fun getFactory(previewUrl: String, coverUrl: String): ViewModelProvider.Factory =
+            viewModelFactory {
             initializer {
                 PlayerViewModel(
                     previewUrl = previewUrl,
+                    coverUrl = coverUrl,
                     player = Creator.providePlayerInteractor()
                 )
             }
