@@ -76,6 +76,13 @@
         <item name="android:scaleType">center</item>
     </style>
 
+    <style name="SettingsSwitch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="thumbTint">@color/sw_thumb</item>
+        <item name="trackTint">@color/sw_track</item>
+        <item name="android:background">@null</item>
+        <item name="useMaterialThemeColors">false</item>
+    </style>
+
     <style name="TextViewTrackName">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

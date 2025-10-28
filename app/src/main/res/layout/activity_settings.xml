@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/settings_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSecondary"
     android:orientation="vertical"
-    android:theme="@style/Theme.PlaylistMaker"
-    >
+    android:theme="@style/Theme.PlaylistMaker">
 
     <LinearLayout
         style="@style/LinearLayoutHeaderStyle"
@@ -29,6 +27,7 @@
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/sw"
+        style="@style/SettingsSwitch"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_61"
         android:layout_marginStart="@dimen/dp_16"
@@ -39,8 +38,6 @@
         android:text="@string/dark_theme"
         android:textColor="?attr/colorOnPrimary"
         android:textSize="@dimen/sp_16"
-        app:thumbTint="@color/sw_thumb"
-        app:trackTint="@color/sw_track"
         />
 
     <LinearLayout
