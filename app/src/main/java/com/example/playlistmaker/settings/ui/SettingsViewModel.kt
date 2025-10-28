@@ -1,11 +1,9 @@
 package com.example.playlistmaker.settings.ui
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.creator.Creator
@@ -44,8 +42,6 @@ class SettingsViewModel(
     companion object {
         fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val app = this[APPLICATION_KEY] as Application
-                Creator.initApplication(app)
                 SettingsViewModel(
                     sharingInteractor = Creator.provideSharingInteractor(),
                     settingsInteractor = Creator.provideSettingsInteractor()

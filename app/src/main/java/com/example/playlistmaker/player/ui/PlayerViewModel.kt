@@ -10,35 +10,36 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.PlayerInteractor
-import com.example.playlistmaker.player.domain.PlayerState
 
 class PlayerViewModel(
     private val previewUrl: String,
-    private val coverUrl: String,
+    coverUrl: String,
     private val player: PlayerInteractor
 ) : ViewModel() {
-    private val coverLiveData = MutableLiveData<String>()
-    val observeCoverLiveData: LiveData<String> = coverLiveData
 
-    private val playerState = MutableLiveData<PlayerState>(PlayerState.Default)
-    val playerStateObserver: LiveData<PlayerState> = playerState
+    val highResCoverUrl: String = coverUrl.replaceAfterLast('/', "512x512bb.jpg")
 
-    private val timerText = MutableLiveData("00:00")
-    val timerTextObserver: LiveData<String> = timerText
+    private val uiStateLiveData = MutableLiveData<PlayerUiState>()
+    val observeUiStateLiveData: LiveData<PlayerUiState> = uiStateLiveData
 
     private val handler = Handler(Looper.getMainLooper())
 
     private val timerRunnable = object : Runnable {
         override fun run() {
-            if (playerState.value == PlayerState.Playing) {
-                timerText.postValue(formatTime(player.getCurrentPosition()))
+            val currentState = observeUiStateLiveData.value
+            if (currentState is PlayerUiState.Content && currentState.isPlaying) {
+                uiStateLiveData.postValue(
+                    currentState.copy(
+                        progressText = formatTime(player.getCurrentPosition())
+                    )
+                )
                 handler.postDelayed(this, DELAY)
             }
         }
     }
 
     init {
-        prepareCoverUrl(coverUrl)
+        uiStateLiveData.value = PlayerUiState.Preparing
         preparePlayer()
     }
 
@@ -46,54 +47,69 @@ class PlayerViewModel(
         player.preparePlayer(
             url = previewUrl,
             onReady = {
-                playerState.postValue(PlayerState.Prepared)
-                timerText.postValue("00:00")
+                uiStateLiveData.postValue(
+                    PlayerUiState.Content(
+                        isPlaying = false,
+                        progressText = "00:00"
+                    )
+                )
             },
             onCompletion = {
-                playerState.postValue(PlayerState.Prepared)
                 handler.removeCallbacks(timerRunnable)
-                timerText.postValue("00:00")
+                uiStateLiveData.postValue(
+                    PlayerUiState.Content(
+                        isPlaying = false,
+                        progressText = "00:00"
+                    )
+                )
             }
         )
     }
-    private fun prepareCoverUrl(artworkUrl: String) {
-        val highResUrl = artworkUrl.replaceAfterLast('/', "512x512bb.jpg")
-        coverLiveData.postValue(highResUrl)
-    }
 
     fun onPlayButtonClicked() {
-        when (playerState.value) {
-            PlayerState.Playing -> pausePlayer()
-            PlayerState.Prepared, PlayerState.Paused -> startPlayer()
+        when (val state = uiStateLiveData.value) {
+            is PlayerUiState.Content -> {
+                if (state.isPlaying) {
+                    pausePlayer()
+                } else {
+                    startPlayer()
+                }
+            }
+
             else -> {}
         }
     }
-    
+
     fun onPause() {
         pausePlayer()
     }
 
     private fun startPlayer() {
         player.start()
-        playerState.value = PlayerState.Playing
+        uiStateLiveData.value = PlayerUiState.Content(
+            isPlaying = true,
+            progressText = formatTime(player.getCurrentPosition())
+        )
         handler.post(timerRunnable)
     }
 
     private fun pausePlayer() {
-        if (playerState.value == PlayerState.Playing) {
-            player.pause()
-            playerState.value = PlayerState.Paused
-            handler.removeCallbacks(timerRunnable)
+        (observeUiStateLiveData.value as? PlayerUiState.Content)?.let {
+            if (it.isPlaying) {
+                player.pause()
+                handler.removeCallbacks(timerRunnable)
+                uiStateLiveData.value = it.copy(isPlaying = false)
+            }
         }
     }
-    
+
     private fun formatTime(ms: Int): String {
         val totalSeconds = ms / 1000
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
-    
+
     override fun onCleared() {
         super.onCleared()
         player.release()
@@ -105,13 +121,13 @@ class PlayerViewModel(
 
         fun getFactory(previewUrl: String, coverUrl: String): ViewModelProvider.Factory =
             viewModelFactory {
-            initializer {
-                PlayerViewModel(
-                    previewUrl = previewUrl,
-                    coverUrl = coverUrl,
-                    player = Creator.providePlayerInteractor()
-                )
+                initializer {
+                    PlayerViewModel(
+                        previewUrl = previewUrl,
+                        coverUrl = coverUrl,
+                        player = Creator.providePlayerInteractor()
+                    )
+                }
             }
-        }
     }
 }

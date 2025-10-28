@@ -124,7 +124,6 @@ class SearchActivity : AppCompatActivity() {
                 ivError.isVisible = false
                 tvError.isVisible = false
                 btnRefresh.isVisible = false
-
                 adapter.tracks = ArrayList(state.tracks)
                 adapter.notifyDataSetChanged()
             }
@@ -136,7 +135,6 @@ class SearchActivity : AppCompatActivity() {
                 ivError.isVisible = true
                 tvError.isVisible = true
                 btnRefresh.isVisible = true
-
                 ivError.setImageResource(R.drawable.image_no_internet)
                 tvError.text = getString(R.string.no_internet)
             }
@@ -148,7 +146,6 @@ class SearchActivity : AppCompatActivity() {
                 ivError.isVisible = true
                 tvError.isVisible = true
                 btnRefresh.isVisible = false
-
                 ivError.setImageResource(R.drawable.image_nothing_found)
                 tvError.text = getString(R.string.nothing_found)
             }
@@ -159,7 +156,6 @@ class SearchActivity : AppCompatActivity() {
                 ivError.isVisible = false
                 tvError.isVisible = false
                 btnRefresh.isVisible = false
-
                 if (state.tracks.isNotEmpty()) {
                     searchHistorySection.isVisible = true
                     historyAdapter.tracks = ArrayList(state.tracks)

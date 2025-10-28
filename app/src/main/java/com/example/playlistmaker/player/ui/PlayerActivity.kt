@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.player.domain.PlayerState
 import com.example.playlistmaker.search.domain.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -23,7 +22,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private val viewModel: PlayerViewModel by viewModels {
-        PlayerViewModel.getFactory(track.previewUrl ?: "", track.artworkUrl100 )
+        PlayerViewModel.getFactory(track.previewUrl ?: "", track.artworkUrl100)
     }
 
     private lateinit var binding: ActivityPlayerBinding
@@ -47,25 +46,11 @@ class PlayerActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
-
         bindTrackData(track)
-
-        viewModel.observeCoverLiveData.observe(this) { url ->
-            Glide.with(this)
-                .load(url)
-                .placeholder(R.drawable.track_placeholder_312)
-                .transform(RoundedCorners(dpToPx(resources.getDimension(R.dimen.dp_8))))
-                .into(binding.ivCover)
+        loadCoverImage()
+        viewModel.observeUiStateLiveData.observe(this) { state ->
+            render(state)
         }
-
-        viewModel.playerStateObserver.observe(this) { state ->
-            updatePlayButton(state)
-        }
-
-        viewModel.timerTextObserver.observe(this) { time ->
-            binding.tvTrackTimeCurrent.text = time
-        }
-
         binding.btnPlay.setOnClickListener { viewModel.onPlayButtonClicked() }
     }
 
@@ -74,13 +59,20 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.onPause()
     }
 
-    private fun updatePlayButton(state: PlayerState) {
-        binding.btnPlay.setImageResource(
-            when (state) {
-                PlayerState.Playing -> R.drawable.ic_pause_100
-                else -> R.drawable.ic_play_100
+    private fun render(state: PlayerUiState) {
+        when (state) {
+            is PlayerUiState.Preparing -> {
+                binding.btnPlay.isEnabled = false
             }
-        )
+
+            is PlayerUiState.Content -> {
+                binding.btnPlay.isEnabled = true
+                binding.btnPlay.setImageResource(
+                    if (state.isPlaying) R.drawable.ic_pause_100 else R.drawable.ic_play_100
+                )
+                binding.tvTrackTimeCurrent.text = state.progressText
+            }
+        }
     }
 
     private fun bindTrackData(track: Track) {
@@ -110,6 +102,14 @@ class PlayerActivity : AppCompatActivity() {
             text = track.country
             isVisible = !text.isNullOrEmpty()
         }
+    }
+
+    private fun loadCoverImage() {
+        Glide.with(this)
+            .load(viewModel.highResCoverUrl)
+            .placeholder(R.drawable.track_placeholder_312)
+            .transform(RoundedCorners(dpToPx(resources.getDimension(R.dimen.dp_8))))
+            .into(binding.ivCover)
     }
 
 
