@@ -17,25 +17,11 @@ import com.example.playlistmaker.search.domain.TrackSearchInteractor
 import com.example.playlistmaker.player.domain.PlayerRepository
 import com.example.playlistmaker.search.domain.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.TrackSearchRepository
-import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
-import com.example.playlistmaker.settings.domain.SettingsInteractor
-import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
-import com.example.playlistmaker.settings.domain.SettingsRepository
-import com.example.playlistmaker.sharing.data.ExternalNavigatorImpl
-import com.example.playlistmaker.sharing.data.SharingRepositoryImpl
-import com.example.playlistmaker.sharing.domain.ExternalNavigatorRepository
-import com.example.playlistmaker.sharing.domain.SharingInteractor
-import com.example.playlistmaker.sharing.domain.SharingInteractorImpl
-import com.example.playlistmaker.sharing.domain.SharingRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object Creator {
     private lateinit var application: Application
-
-    fun initApplication(application: Application) {
-        this.application = application
-    }
 
     private val retrofit by lazy {
         Retrofit.Builder()
@@ -68,16 +54,6 @@ object Creator {
         return PlayerInteractorImpl(getPlayerRepository())
     }
 
-    private fun getSettingsRepository(): SettingsRepository {
-        val sharedPreferences =
-            application.getSharedPreferences(PrefsKeys.THEME, Context.MODE_PRIVATE)
-        return SettingsRepositoryImpl(sharedPreferences)
-    }
-
-    fun provideSettingsInteractor(): SettingsInteractor {
-        return SettingsInteractorImpl(getSettingsRepository())
-    }
-
     private fun getHistoryRepository(): SearchHistoryRepository {
         val sharedPreferences =
             application.getSharedPreferences(PrefsKeys.HISTORY, Context.MODE_PRIVATE)
@@ -87,19 +63,4 @@ object Creator {
     fun provideHistoryInteractor(): HistoryInteractor {
         return HistoryInteractorImpl(getHistoryRepository())
     }
-    fun provideSharingInteractor(): SharingInteractor {
-        return SharingInteractorImpl(
-            externalNavigator = getExternalNavigator(),
-            sharingRepository = getSharingRepository()
-        )
-    }
-
-    private fun getSharingRepository(): SharingRepository {
-        return SharingRepositoryImpl(application)
-    }
-
-    private fun getExternalNavigator(): ExternalNavigatorRepository {
-        return ExternalNavigatorImpl(application)
-    }
-
 }
