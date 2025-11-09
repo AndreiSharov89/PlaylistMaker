@@ -2,7 +2,6 @@ package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
 import android.util.TypedValue
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -12,6 +11,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.search.domain.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -21,8 +22,8 @@ class PlayerActivity : AppCompatActivity() {
         intent.getParcelableExtra(TRACK_DATA, Track::class.java)!!
     }
 
-    private val viewModel: PlayerViewModel by viewModels {
-        PlayerViewModel.getFactory(track.previewUrl ?: "", track.artworkUrl100)
+    private val viewModel: PlayerViewModel by viewModel {
+        parametersOf(track.previewUrl ?: "", track.artworkUrl100)
     }
 
     private lateinit var binding: ActivityPlayerBinding
