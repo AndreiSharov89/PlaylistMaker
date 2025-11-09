@@ -25,7 +25,6 @@ val domainModule = module {
         PlayerInteractorImpl(get())
     }
 
-    // Search
     single<TrackSearchInteractor> {
         TrackSearchInteractorImpl(get())
     }

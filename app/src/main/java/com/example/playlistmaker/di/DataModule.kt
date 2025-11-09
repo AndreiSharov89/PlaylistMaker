@@ -51,7 +51,6 @@ val dataModule = module {
         PlayerMediaPlayer(get())
     }
 
-    // Search
     single {
         Retrofit.Builder()
             .baseUrl("https://itunes.apple.com")
