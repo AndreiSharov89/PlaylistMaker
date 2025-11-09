@@ -2,22 +2,22 @@ package com.example.playlistmaker.search.data
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.PrefsKeys
 import com.example.playlistmaker.search.domain.SearchHistoryRepository
+import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 
 class HistoryRepositoryImpl(
     private val sharedPreferences: SharedPreferences,
-    private val gson: Gson = Gson()
+    private val gson: Gson
 ) : SearchHistoryRepository {
 
     companion object {
-        private const val HISTORY_KEY = "search_history"
         private const val MAX_HISTORY_SIZE = 10
     }
 
     override fun getHistory(): List<Track> {
-        val json = sharedPreferences.getString(HISTORY_KEY, null) ?: return emptyList()
+        val json = sharedPreferences.getString(PrefsKeys.HISTORY, null) ?: return emptyList()
         return try {
             gson.fromJson(json, Array<Track>::class.java).toList()
         } catch (e: Exception) {
@@ -37,7 +37,7 @@ class HistoryRepositoryImpl(
 
     private fun saveHistory(tracks: List<Track>) {
         sharedPreferences.edit {
-            putString(HISTORY_KEY, gson.toJson(tracks))
+            putString(PrefsKeys.HISTORY, gson.toJson(tracks))
         }
     }
 }
