@@ -62,11 +62,11 @@ val dataModule = module {
         RetrofitNetworkClient(get())
     }
 
-    single<TrackSearchRepository> {
+    factory<TrackSearchRepository> {
         TrackSearchRepositoryImpl(get())
     }
 
-    single<SearchHistoryRepository> {
+    factory<SearchHistoryRepository> {
         HistoryRepositoryImpl(get(), get())
     }
 }

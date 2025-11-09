@@ -13,11 +13,11 @@ import com.example.playlistmaker.sharing.domain.SharingInteractorImpl
 import org.koin.dsl.module
 
 val domainModule = module {
-    single<SettingsInteractor> {
+    factory<SettingsInteractor> {
         SettingsInteractorImpl(get())
     }
 
-    single<SharingInteractor> {
+    factory<SharingInteractor> {
         SharingInteractorImpl(get(), get())
     }
 
@@ -25,11 +25,11 @@ val domainModule = module {
         PlayerInteractorImpl(get())
     }
 
-    single<TrackSearchInteractor> {
+    factory<TrackSearchInteractor> {
         TrackSearchInteractorImpl(get())
     }
 
-    single<HistoryInteractor> {
+    factory<HistoryInteractor> {
         HistoryInteractorImpl(get())
     }
 }
