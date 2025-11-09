@@ -5,6 +5,10 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.PlayerInteractor
 
 class PlayerViewModel(
@@ -114,5 +118,16 @@ class PlayerViewModel(
 
     companion object {
         private const val DELAY = 200L
+
+        fun getFactory(previewUrl: String, coverUrl: String): ViewModelProvider.Factory =
+            viewModelFactory {
+                initializer {
+                    PlayerViewModel(
+                        previewUrl = previewUrl,
+                        coverUrl = coverUrl,
+                        player = Creator.providePlayerInteractor()
+                    )
+                }
+            }
     }
 }
