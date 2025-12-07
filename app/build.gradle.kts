@@ -59,4 +59,6 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.retrofit)
     implementation(libs.koin.android)
+    implementation(libs.fragment)
+    implementation(libs.viewpager2)
 }

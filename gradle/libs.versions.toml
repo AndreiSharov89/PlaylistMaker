@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.0"
+agp = "8.13.1"
 kotlin = "2.0.21"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -15,6 +15,8 @@ retrofit = "2.9.0"
 lifecycle = "2.5.1"
 activityKtx = "1.6.1"
 koin = "3.3.0"
+fragment = "1.5.5"
+viewpager2 = "1.0.0"
 
 
 [libraries]
@@ -35,6 +37,8 @@ androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecy
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
+viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

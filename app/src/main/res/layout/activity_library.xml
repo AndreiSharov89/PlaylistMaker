@@ -1,9 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/library_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".library.ui.LibraryActivity">
+    android:background="?attr/colorSecondary"
+    android:orientation="vertical"
+    android:theme="@style/Theme.PlaylistMaker">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        style="@style/LinearLayoutHeaderStyle"
+        android:theme="@style/Theme.PlaylistMaker">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            style="@style/ImageBackButton" />
+
+        <TextView
+            style="@style/TextViewHeaderStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/library" />
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/text_white"
+        app:tabIndicator="@drawable/tab_indicator"
+        app:tabIndicatorColor="@color/text_black"
+        app:tabTextColor="@color/text_black"
+        app:tabSelectedTextColor="@color/text_black"
+        app:tabTextAppearance="@style/TabTextAppearance" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

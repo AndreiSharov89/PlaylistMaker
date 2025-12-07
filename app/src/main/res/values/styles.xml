@@ -161,4 +161,9 @@
         <item name="android:gravity">center_vertical|end</item>
         <item name="android:theme">@style/Theme.PlaylistMaker</item>
     </style>
+
+    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 </resources>
