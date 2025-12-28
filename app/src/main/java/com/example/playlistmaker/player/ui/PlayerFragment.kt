@@ -2,54 +2,52 @@ package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
 import android.util.TypedValue
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.search.domain.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : Fragment() {
+    private var _binding: FragmentPlayerBinding? = null
+    private val binding get() = _binding!!
 
-    private val track: Track by lazy {
-        intent.getParcelableExtra(TRACK_DATA, Track::class.java)!!
-    }
+    private val args: PlayerFragmentArgs by navArgs()
+    private val track: Track by lazy { args.track }
 
     private val viewModel: PlayerViewModel by viewModel {
         parametersOf(track.previewUrl ?: "", track.artworkUrl100)
     }
 
-    private lateinit var binding: ActivityPlayerBinding
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.clPlayerMain) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(
-                systemBars.left,
-                systemBars.top,
-                systemBars.right,
-                systemBars.bottom
-            )
-            WindowInsetsCompat.CONSUMED
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.btnBack.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            findNavController().navigateUp()
         }
         bindTrackData(track)
         loadCoverImage()
-        viewModel.observeUiStateLiveData.observe(this) { state ->
+        viewModel.observeUiStateLiveData.observe(viewLifecycleOwner) { state ->
             render(state)
         }
         binding.btnPlay.setOnClickListener { viewModel.onPlayButtonClicked() }
@@ -58,6 +56,11 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     private fun render(state: PlayerUiState) {
@@ -117,7 +120,4 @@ class PlayerActivity : AppCompatActivity() {
     private fun dpToPx(dp: Float): Int =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, dp, resources.displayMetrics).toInt()
 
-    companion object {
-        const val TRACK_DATA = "track"
-    }
 }
