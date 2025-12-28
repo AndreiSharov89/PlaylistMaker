@@ -41,6 +41,7 @@ class SearchViewModel(
     }
 
     fun search(query: String) {
+        searchRunnable?.let { handler.removeCallbacks(it) }
         searchStateLiveData.value = SearchState.Loading
         searchInteractor.searchTrack(query, object : TrackSearchInteractor.Consumer<List<Track>> {
             override fun consume(data: TrackSearchInteractor.Consumer.ConsumerData<List<Track>>) {

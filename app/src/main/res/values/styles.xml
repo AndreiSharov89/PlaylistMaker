@@ -45,6 +45,8 @@
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:layout_gravity">start</item>
+        <item name="android:layout_marginTop">@dimen/dp_10</item>
+        <item name="android:layout_marginBottom">@dimen/dp_12</item>
     </style>
 
     <style name="LinearLayoutSettingsStyle">
@@ -166,4 +168,6 @@
         <item name="textAllCaps">false</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+
 </resources>
