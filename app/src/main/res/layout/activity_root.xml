@@ -12,7 +12,6 @@
         android:id="@+id/container_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
-
         app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,6 +19,15 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph" />
+
+    <View
+        android:id="@+id/navi_border"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/border_light_grey"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

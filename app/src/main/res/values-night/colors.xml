@@ -18,4 +18,5 @@
     <color name="btn_background_grey">#FFFFFF</color>>
     <color name="item_selected">#3772E7</color>
     <color name="YP_background_secondary">#1A1B22</color>
+    <color name="border_light_grey">#E6E8EB</color>>
 </resources>

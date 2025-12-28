@@ -58,9 +58,9 @@ class PlayerFragment : Fragment() {
         viewModel.onPause()
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         _binding = null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
     private fun render(state: PlayerUiState) {

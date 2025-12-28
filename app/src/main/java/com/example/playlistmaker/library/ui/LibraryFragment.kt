@@ -41,9 +41,12 @@ class LibraryFragment : Fragment() {
         }
         tabMediator.attach()
     }
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
 
     override fun onDestroy() {
-        _binding = null
         super.onDestroy()
         if (::tabMediator.isInitialized) {
             tabMediator.detach()

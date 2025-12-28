@@ -186,6 +186,11 @@ class SearchFragment : Fragment() {
         savedInstanceState?.getString(SEARCH_STRING).orEmpty()
     }
 
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
+
     companion object {
         private const val SEARCH_STRING = "SEARCH_STRING"
         private const val SEARCH = ""
