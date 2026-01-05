@@ -10,11 +10,13 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -47,14 +49,18 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        val onTrackClick = { track: Track ->
+        val onTrackClickDebounced = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track ->
             viewModel.saveTrack(track)
             val action = SearchFragmentDirections.actionSearchFragmentToPlayerFragment(track)
             findNavController().navigate(action)
         }
 
-        adapter = TrackAdapter(onTrackClick)
-        historyAdapter = TrackAdapter(onTrackClick)
+        adapter = TrackAdapter { track -> onTrackClickDebounced(track) }
+        historyAdapter = TrackAdapter { track -> onTrackClickDebounced(track) }
 
         binding.rvTrack.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTrack.adapter = adapter
@@ -194,5 +200,6 @@ class SearchFragment : Fragment() {
     companion object {
         private const val SEARCH_STRING = "SEARCH_STRING"
         private const val SEARCH = ""
+        private const val CLICK_DEBOUNCE_DELAY = 500L
     }
 }

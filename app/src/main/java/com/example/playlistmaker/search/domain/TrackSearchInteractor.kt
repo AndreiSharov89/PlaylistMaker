@@ -1,16 +1,12 @@
 package com.example.playlistmaker.search.domain
 
+import kotlinx.coroutines.flow.Flow
+
 interface TrackSearchInteractor {
-    fun searchTrack(expression: String, consumer: Consumer<List<Track>>)
-    interface Consumer<T>{
-        fun consume(data: ConsumerData<T>)
-        sealed interface ConsumerData<T>{
-            data class Data<T>(val value: T) : ConsumerData<T>
-            data class Error<T>(val message: Int) : ConsumerData<T>
-        }
-    }
+    suspend fun searchTrack(expression: String): Flow<Resource<List<Track>>>
+
     sealed interface Resource<T> {
-        data class Success<T>(val data: T): Resource<T>
-        data class Error<T>(val message: Int): Resource<T>
+        class Success<T>(val data: T) : Resource<T>
+        class Error<T>(val errorCode: Int) : Resource<T>
     }
 }
