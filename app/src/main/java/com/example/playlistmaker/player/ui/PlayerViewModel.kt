@@ -1,11 +1,13 @@
 package com.example.playlistmaker.player.ui
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.PlayerInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val previewUrl: String,
@@ -18,21 +20,7 @@ class PlayerViewModel(
     private val uiStateLiveData = MutableLiveData<PlayerUiState>()
     val observeUiStateLiveData: LiveData<PlayerUiState> = uiStateLiveData
 
-    private val handler = Handler(Looper.getMainLooper())
-
-    private val timerRunnable = object : Runnable {
-        override fun run() {
-            val currentState = observeUiStateLiveData.value
-            if (currentState is PlayerUiState.Content && currentState.isPlaying) {
-                uiStateLiveData.postValue(
-                    currentState.copy(
-                        progressText = formatTime(player.getCurrentPosition())
-                    )
-                )
-                handler.postDelayed(this, DELAY)
-            }
-        }
-    }
+    private var timerJob: Job? = null
 
     init {
         uiStateLiveData.value = PlayerUiState.Preparing
@@ -51,7 +39,7 @@ class PlayerViewModel(
                 )
             },
             onCompletion = {
-                handler.removeCallbacks(timerRunnable)
+                stopTimer()
                 uiStateLiveData.postValue(
                     PlayerUiState.Content(
                         isPlaying = false,
@@ -82,18 +70,24 @@ class PlayerViewModel(
 
     private fun startPlayer() {
         player.start()
+        val currentState = uiStateLiveData.value as? PlayerUiState.Content
+        val initialTime = if (currentState?.progressText == "00:00") {
+            "00:00"
+        } else {
+            formatTime(player.getCurrentPosition())
+        }
         uiStateLiveData.value = PlayerUiState.Content(
             isPlaying = true,
-            progressText = formatTime(player.getCurrentPosition())
+            progressText = initialTime
         )
-        handler.post(timerRunnable)
+        startTimer()
     }
 
     private fun pausePlayer() {
         (observeUiStateLiveData.value as? PlayerUiState.Content)?.let {
             if (it.isPlaying) {
                 player.pause()
-                handler.removeCallbacks(timerRunnable)
+                stopTimer()
                 uiStateLiveData.value = it.copy(isPlaying = false)
             }
         }
@@ -109,7 +103,29 @@ class PlayerViewModel(
     override fun onCleared() {
         super.onCleared()
         player.release()
-        handler.removeCallbacks(timerRunnable)
+        timerJob?.cancel()
+    }
+
+    private fun startTimer() {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
+            while (true) {
+                delay(DELAY)
+                val currentState = uiStateLiveData.value
+                if (currentState is PlayerUiState.Content && currentState.isPlaying) {
+                    val currentPos = player.getCurrentPosition()
+                    uiStateLiveData.value = currentState.copy(
+                        progressText = formatTime(currentPos)
+                    )
+                } else {
+                    break
+                }
+            }
+        }
+    }
+
+    private fun stopTimer() {
+        timerJob?.cancel()
     }
 
     companion object {
