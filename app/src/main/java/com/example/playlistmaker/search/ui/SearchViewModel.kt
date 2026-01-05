@@ -21,6 +21,7 @@ class SearchViewModel(
 
 
     private var latestSearchText: String? = null
+    private var debounceJob: Job? = null
     private var searchJob: Job? = null
 
     fun showHistory() {
@@ -36,11 +37,12 @@ class SearchViewModel(
         if (latestSearchText == changedText) return
 
         this.latestSearchText = changedText
-        searchJob?.cancel()
+        debounceJob?.cancel()
         if (changedText.isEmpty()) {
+            searchJob?.cancel()
             showHistory()
         } else {
-            searchJob = viewModelScope.launch {
+            debounceJob = viewModelScope.launch {
                 delay(SEARCH_DEBOUNCE_DELAY)
                 search(changedText)
             }
@@ -51,7 +53,9 @@ class SearchViewModel(
         if (query.isEmpty()) return
         latestSearchText = query
 
+        debounceJob?.cancel()
         searchJob?.cancel()
+
         searchJob = viewModelScope.launch {
             searchStateLiveData.value = SearchState.Loading
 
