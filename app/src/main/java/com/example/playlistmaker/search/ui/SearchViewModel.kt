@@ -25,11 +25,13 @@ class SearchViewModel(
     private var searchJob: Job? = null
 
     fun showHistory() {
-        val tracks = historyInteractor.getHistory()
-        if (tracks.isNotEmpty()) {
-            searchStateLiveData.postValue(SearchState.History(tracks))
-        } else {
-            searchStateLiveData.postValue(SearchState.EmptyHistory)
+        viewModelScope.launch {
+            val tracks = historyInteractor.getHistory()
+            if (tracks.isNotEmpty()) {
+                searchStateLiveData.postValue(SearchState.History(tracks))
+            } else {
+                searchStateLiveData.postValue(SearchState.EmptyHistory)
+            }
         }
     }
 
@@ -76,14 +78,17 @@ class SearchViewModel(
                 }
         }
     }
-
     fun saveTrack(track: Track) {
-        historyInteractor.saveTrack(track)
+        viewModelScope.launch {
+            historyInteractor.saveTrack(track)
+        }
     }
 
     fun clearHistory() {
-        historyInteractor.clearHistory()
-        showHistory()
+        viewModelScope.launch {
+            historyInteractor.clearHistory()
+            showHistory()
+        }
     }
 
     companion object {

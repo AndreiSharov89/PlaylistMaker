@@ -2,6 +2,11 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import android.media.MediaPlayer
+import androidx.room.Room
+import com.example.playlistmaker.db.AppDatabase
+import com.example.playlistmaker.db.TrackDbConverter
+import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
+import com.example.playlistmaker.library.domain.FavoritesRepository
 import com.example.playlistmaker.player.data.PlayerMediaPlayer
 import com.example.playlistmaker.player.domain.PlayerRepository
 import com.example.playlistmaker.search.data.HistoryRepositoryImpl
@@ -63,10 +68,25 @@ val dataModule = module {
     }
 
     factory<TrackSearchRepository> {
-        TrackSearchRepositoryImpl(get())
+        TrackSearchRepositoryImpl(get(), get())
     }
 
     factory<SearchHistoryRepository> {
-        HistoryRepositoryImpl(get(), get())
+        HistoryRepositoryImpl(get(), get(), get())
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "favorites.db")
+            .build()
+    }
+
+    single {
+        get<AppDatabase>().favoritesDao()
+    }
+
+    factory { TrackDbConverter() }
+
+    single<FavoritesRepository> {
+        FavoritesRepositoryImpl(get(), get())
     }
 }

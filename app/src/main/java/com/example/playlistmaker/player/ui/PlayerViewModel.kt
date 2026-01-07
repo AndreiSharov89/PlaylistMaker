@@ -4,37 +4,43 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.library.domain.FavoritesInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
+import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
-    private val previewUrl: String,
-    coverUrl: String,
-    private val player: PlayerInteractor
+    private val track: Track,
+    private val player: PlayerInteractor,
+    private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
-    val highResCoverUrl: String = coverUrl.replaceAfterLast('/', "512x512bb.jpg")
+    val highResCoverUrl: String = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
     private val uiStateLiveData = MutableLiveData<PlayerUiState>()
     val observeUiStateLiveData: LiveData<PlayerUiState> = uiStateLiveData
+    private val isFavoriteLiveData = MutableLiveData<Boolean>()
+    val observeIsFavoriteLiveData: LiveData<Boolean> = isFavoriteLiveData
 
     private var timerJob: Job? = null
 
     init {
+        isFavoriteLiveData.value = track.isFavorite
         uiStateLiveData.value = PlayerUiState.Preparing
         preparePlayer()
     }
 
     private fun preparePlayer() {
         player.preparePlayer(
-            url = previewUrl,
+            url = track.previewUrl ?: "",
             onReady = {
                 uiStateLiveData.postValue(
                     PlayerUiState.Content(
                         isPlaying = false,
-                        progressText = "00:00"
+                        progressText = "00:00",
+                        //isFavorite = track.isFavorite
                     )
                 )
             },
@@ -43,7 +49,8 @@ class PlayerViewModel(
                 uiStateLiveData.postValue(
                     PlayerUiState.Content(
                         isPlaying = false,
-                        progressText = "00:00"
+                        progressText = "00:00",
+                        //isFavorite = track.isFavorite
                     )
                 )
             }
@@ -78,7 +85,8 @@ class PlayerViewModel(
         }
         uiStateLiveData.value = PlayerUiState.Content(
             isPlaying = true,
-            progressText = initialTime
+            progressText = initialTime,
+            //isFavorite = track.isFavorite
         )
         startTimer()
     }
@@ -126,6 +134,21 @@ class PlayerViewModel(
 
     private fun stopTimer() {
         timerJob?.cancel()
+    }
+
+    fun onFavoriteClicked() {
+        val currentFavorite = isFavoriteLiveData.value ?: track.isFavorite
+        val newFavoriteState = !currentFavorite
+        track.isFavorite = newFavoriteState
+        isFavoriteLiveData.value = newFavoriteState
+
+        viewModelScope.launch {
+            if (newFavoriteState) {
+                favoritesInteractor.addTrack(track)
+            } else {
+                favoritesInteractor.removeTrack(track)
+            }
+        }
     }
 
     companion object {

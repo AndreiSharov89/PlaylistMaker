@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.db.AppDatabase
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TrackSearchInteractor
 import com.example.playlistmaker.search.domain.TrackSearchRepository
@@ -8,12 +9,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
-class TrackSearchRepositoryImpl(private val networkClient: NetworkClient) : TrackSearchRepository {
+class TrackSearchRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val appDatabase: AppDatabase
+) : TrackSearchRepository {
     override suspend fun searchTrack(expression: String): Flow<TrackSearchInteractor.Resource<List<Track>>> =
         flow {
             val response = networkClient.doRequset(TrackSearchRequest(expression))
             when (response.resultCode) {
                 200 -> {
+                    val favoritesIds = appDatabase.favoritesDao().getAllTracksId()
+
                     val trackList = (response as TrackSearchResponse).results.map { trackDto ->
                         Track(
                             trackId = trackDto.trackId,
@@ -25,7 +31,8 @@ class TrackSearchRepositoryImpl(private val networkClient: NetworkClient) : Trac
                             releaseDate = trackDto.releaseDate,
                             primaryGenreName = trackDto.primaryGenreName,
                             country = trackDto.country,
-                            previewUrl = trackDto.previewUrl
+                            previewUrl = trackDto.previewUrl,
+                            isFavorite = favoritesIds.contains(trackDto.trackId.toString())
                         )
                     }
                     emit(TrackSearchInteractor.Resource.Success(trackList))
