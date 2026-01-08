@@ -5,6 +5,6 @@ sealed class PlayerUiState {
     data class Content(
         val isPlaying: Boolean,
         val progressText: String,
-        //val isFavorite: Boolean
+        val isFavorite: Boolean
     ) : PlayerUiState()
 }

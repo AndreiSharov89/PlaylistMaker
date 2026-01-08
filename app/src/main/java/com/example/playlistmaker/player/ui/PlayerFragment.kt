@@ -41,16 +41,11 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }
         bindTrackData(track)
         loadCoverImage()
-
-        viewModel.observeIsFavoriteLiveData.observe(viewLifecycleOwner) { isFavorite ->
-            renderFavoriteButton(isFavorite)
-        }
 
         viewModel.observeUiStateLiveData.observe(viewLifecycleOwner) { state ->
             render(state)
@@ -59,6 +54,7 @@ class PlayerFragment : Fragment() {
         binding.btnLike.setOnClickListener {
             viewModel.onFavoriteClicked()
         }
+        viewModel.preparePlayer()
     }
 
     override fun onPause() {
@@ -84,7 +80,7 @@ class PlayerFragment : Fragment() {
                 )
 
                 binding.tvTrackTimeCurrent.text = state.progressText
-
+                renderFavoriteButton(state.isFavorite)
             }
         }
     }
@@ -125,6 +121,7 @@ class PlayerFragment : Fragment() {
             text = track.country
             isVisible = !text.isNullOrEmpty()
         }
+        renderFavoriteButton(track.isFavorite)
     }
 
     private fun loadCoverImage() {

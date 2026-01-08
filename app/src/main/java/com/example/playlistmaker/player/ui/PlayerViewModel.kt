@@ -16,23 +16,14 @@ class PlayerViewModel(
     private val player: PlayerInteractor,
     private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
-
     val highResCoverUrl: String = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-
-    private val uiStateLiveData = MutableLiveData<PlayerUiState>()
+    private val uiStateLiveData = MutableLiveData<PlayerUiState>(PlayerUiState.Preparing)
     val observeUiStateLiveData: LiveData<PlayerUiState> = uiStateLiveData
-    private val isFavoriteLiveData = MutableLiveData<Boolean>()
-    val observeIsFavoriteLiveData: LiveData<Boolean> = isFavoriteLiveData
-
     private var timerJob: Job? = null
 
-    init {
-        isFavoriteLiveData.value = track.isFavorite
-        uiStateLiveData.value = PlayerUiState.Preparing
-        preparePlayer()
-    }
-
-    private fun preparePlayer() {
+    fun preparePlayer() {
+        val currentIsFavorite =
+            (uiStateLiveData.value as? PlayerUiState.Content)?.isFavorite ?: track.isFavorite
         player.preparePlayer(
             url = track.previewUrl ?: "",
             onReady = {
@@ -40,7 +31,7 @@ class PlayerViewModel(
                     PlayerUiState.Content(
                         isPlaying = false,
                         progressText = "00:00",
-                        //isFavorite = track.isFavorite
+                        isFavorite = currentIsFavorite
                     )
                 )
             },
@@ -50,7 +41,7 @@ class PlayerViewModel(
                     PlayerUiState.Content(
                         isPlaying = false,
                         progressText = "00:00",
-                        //isFavorite = track.isFavorite
+                        isFavorite = currentIsFavorite
                     )
                 )
             }
@@ -78,15 +69,9 @@ class PlayerViewModel(
     private fun startPlayer() {
         player.start()
         val currentState = uiStateLiveData.value as? PlayerUiState.Content
-        val initialTime = if (currentState?.progressText == "00:00") {
-            "00:00"
-        } else {
-            formatTime(player.getCurrentPosition())
-        }
-        uiStateLiveData.value = PlayerUiState.Content(
+        uiStateLiveData.value = currentState?.copy(
             isPlaying = true,
-            progressText = initialTime,
-            //isFavorite = track.isFavorite
+            progressText = currentState.progressText.ifEmpty { "00:00" }
         )
         startTimer()
     }
@@ -137,13 +122,13 @@ class PlayerViewModel(
     }
 
     fun onFavoriteClicked() {
-        val currentFavorite = isFavoriteLiveData.value ?: track.isFavorite
-        val newFavoriteState = !currentFavorite
-        track.isFavorite = newFavoriteState
-        isFavoriteLiveData.value = newFavoriteState
+        val currentState = uiStateLiveData.value as? PlayerUiState.Content ?: return
+        val newFavoriteStatus = !currentState.isFavorite
+        uiStateLiveData.value = currentState.copy(isFavorite = newFavoriteStatus)
+        track.isFavorite = newFavoriteStatus
 
         viewModelScope.launch {
-            if (newFavoriteState) {
+            if (newFavoriteStatus) {
                 favoritesInteractor.addTrack(track)
             } else {
                 favoritesInteractor.removeTrack(track)

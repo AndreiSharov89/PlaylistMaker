@@ -5,6 +5,7 @@ import com.example.playlistmaker.db.TrackDbConverter
 import com.example.playlistmaker.library.domain.FavoritesRepository
 import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 class FavoritesRepositoryImpl(
@@ -20,7 +21,7 @@ class FavoritesRepositoryImpl(
     }
 
     override fun getFavoriteTracks(): Flow<List<Track>> {
-        return favoritesDao.getAllTracks().map { entities ->
+        return favoritesDao.getAllTracks().distinctUntilChanged().map { entities ->
             entities.map { trackDbConverter.map(it) }
         }
     }
