@@ -27,7 +27,7 @@ class PlayerFragment : Fragment() {
     private val track: Track by lazy { args.track }
 
     private val viewModel: PlayerViewModel by viewModel {
-        parametersOf(track.previewUrl ?: "", track.artworkUrl100)
+        parametersOf(track)
     }
 
     override fun onCreateView(
@@ -41,16 +41,20 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.btnBack.setOnClickListener {
             findNavController().navigateUp()
         }
         bindTrackData(track)
         loadCoverImage()
+
         viewModel.observeUiStateLiveData.observe(viewLifecycleOwner) { state ->
             render(state)
         }
         binding.btnPlay.setOnClickListener { viewModel.onPlayButtonClicked() }
+        binding.btnLike.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
+        viewModel.preparePlayer()
     }
 
     override fun onPause() {
@@ -74,9 +78,20 @@ class PlayerFragment : Fragment() {
                 binding.btnPlay.setImageResource(
                     if (state.isPlaying) R.drawable.ic_pause_100 else R.drawable.ic_play_100
                 )
+
                 binding.tvTrackTimeCurrent.text = state.progressText
+                renderFavoriteButton(state.isFavorite)
             }
         }
+    }
+
+    private fun renderFavoriteButton(isFavorite: Boolean) {
+        val favoriteIcon = if (isFavorite) {
+            R.drawable.ic_like_pressed_51
+        } else {
+            R.drawable.ic_like_51
+        }
+        binding.btnLike.setImageResource(favoriteIcon)
     }
 
     private fun bindTrackData(track: Track) {
@@ -106,6 +121,7 @@ class PlayerFragment : Fragment() {
             text = track.country
             isVisible = !text.isNullOrEmpty()
         }
+        renderFavoriteButton(track.isFavorite)
     }
 
     private fun loadCoverImage() {
