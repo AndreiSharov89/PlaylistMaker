@@ -59,7 +59,9 @@ class PlayerFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.onPause()
+        if (!requireActivity().isChangingConfigurations) {
+            viewModel.onPause()
+        }
     }
 
     override fun onDestroyView() {

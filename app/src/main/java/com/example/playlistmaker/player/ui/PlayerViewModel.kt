@@ -22,6 +22,9 @@ class PlayerViewModel(
     private var timerJob: Job? = null
 
     fun preparePlayer() {
+        if (uiStateLiveData.value is PlayerUiState.Content) {
+            return
+        }
         val currentIsFavorite =
             (uiStateLiveData.value as? PlayerUiState.Content)?.isFavorite ?: track.isFavorite
         player.preparePlayer(
