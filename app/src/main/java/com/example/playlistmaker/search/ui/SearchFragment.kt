@@ -26,7 +26,6 @@ class SearchFragment : Fragment() {
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
-    private var searchString: String = SEARCH
     private val viewModel by viewModel<SearchViewModel>()
 
     override fun onCreateView(
@@ -43,9 +42,12 @@ class SearchFragment : Fragment() {
 
         setupAdapters()
         setupUI()
-        viewModel.showHistory()
         setupObservers()
-        restoreSearchString(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onScreenResumed()
     }
 
     private fun setupAdapters() {
@@ -92,6 +94,7 @@ class SearchFragment : Fragment() {
         binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 viewModel.search(binding.inputEditText.text.toString())
+                hideKeyboard()
                 true
             } else {
                 false
@@ -183,23 +186,12 @@ class SearchFragment : Fragment() {
         imm.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_STRING, searchString)
-    }
-
-    fun restoreSearchString(savedInstanceState: Bundle?) {
-        savedInstanceState?.getString(SEARCH_STRING).orEmpty()
-    }
-
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
     }
 
     companion object {
-        private const val SEARCH_STRING = "SEARCH_STRING"
-        private const val SEARCH = ""
         private const val CLICK_DEBOUNCE_DELAY = 500L
     }
 }

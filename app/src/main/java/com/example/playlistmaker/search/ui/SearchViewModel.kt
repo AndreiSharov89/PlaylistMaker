@@ -24,6 +24,14 @@ class SearchViewModel(
     private var debounceJob: Job? = null
     private var searchJob: Job? = null
 
+    fun onScreenResumed() {
+        if (!latestSearchText.isNullOrEmpty()) {
+            search(latestSearchText!!)
+        } else {
+            showHistory()
+        }
+    }
+
     fun showHistory() {
         viewModelScope.launch {
             val tracks = historyInteractor.getHistory()
@@ -36,7 +44,7 @@ class SearchViewModel(
     }
 
     fun searchDebounce(changedText: String) {
-        if (latestSearchText == changedText) return
+        if (latestSearchText == changedText && searchStateLiveData.value is SearchState.Content) return
 
         this.latestSearchText = changedText
         debounceJob?.cancel()
@@ -78,6 +86,7 @@ class SearchViewModel(
                 }
         }
     }
+
     fun saveTrack(track: Track) {
         viewModelScope.launch {
             historyInteractor.saveTrack(track)
