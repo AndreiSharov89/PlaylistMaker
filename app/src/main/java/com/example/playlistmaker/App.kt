@@ -6,6 +6,7 @@ import com.example.playlistmaker.di.dataModule
 import com.example.playlistmaker.di.domainModule
 import com.example.playlistmaker.di.viewModelModule
 import com.example.playlistmaker.settings.domain.SettingsInteractor
+import com.markodevcic.peko.PermissionRequester
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.component.KoinComponent
@@ -29,5 +30,7 @@ class App : Application(), KoinComponent {
             else
                 AppCompatDelegate.MODE_NIGHT_NO
         )
+
+        PermissionRequester.initialize(applicationContext)
     }
 }

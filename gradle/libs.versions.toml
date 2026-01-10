@@ -23,6 +23,7 @@ safeargsKotlin = "2.9.6"
 coroutines = "1.6.4"
 room = "2.6.1"
 ksp = "2.0.21-1.0.28"
+peko = "3.0.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,6 +51,7 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 room_runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room_ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+peko = { group = "com.markodevcic", name = "peko", version.ref = "peko" }
 
 
 

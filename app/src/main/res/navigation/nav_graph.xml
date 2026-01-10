@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_libraryFragment_to_playerFragment"
             app:destination="@id/playerFragment" />
+        <action
+            android:id="@+id/action_libraryFragment_to_createPlaylistFragment"
+            app:destination="@id/createPlaylistFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -38,4 +41,8 @@
             app:argType="com.example.playlistmaker.search.domain.Track"
             app:nullable="false" />
     </fragment>
+    <fragment
+        android:id="@+id/createPlaylistFragment"
+        android:name="com.example.playlistmaker.createplaylist.ui.CreatePlaylistFragment"
+        android:label="CreatePlaylistFragment" />
 </navigation>
