@@ -13,6 +13,7 @@
         android:layout_marginTop="@dimen/dp_4"
         android:padding="@dimen/dp_12"
         android:src="@drawable/back"
+        android:clickable="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,11 +36,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="@dimen/dp_28"
         android:layout_marginEnd="24dp"
         android:background="@drawable/dashed_rectangle"
         android:scaleType="center"
         android:src="@drawable/image_add_photo_100"
+        android:clickable="true"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,6 +53,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="@dimen/dp_16"
         app:layout_constraintTop_toBottomOf="@id/iv_imageAlbum">
 
         <EditText
@@ -59,13 +62,13 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/edit_text_border"
+            android:background="@drawable/edit_text_border_selector"
             android:hint="@string/text_name"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:lines="1"
             android:maxLength="15"
-            android:paddingStart="16dp"
+            android:paddingStart="@dimen/dp_16"
             android:singleLine="true"
             android:textColor="@color/text_black"
             android:textColorHint="@color/text_black"
@@ -83,7 +86,7 @@
             android:text="@string/text_name"
             android:textColor="@color/clue_gray"
             android:textSize="12sp"
-            android:visibility="visible" />
+            android:visibility="gone" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -100,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/edit_text_border"
+            android:background="@drawable/edit_text_border_selector"
             android:hint="@string/text_desc"
             android:imeOptions="actionDone"
             android:inputType="text"
@@ -124,7 +127,7 @@
             android:text="@string/text_desc"
             android:textColor="@color/clue_gray"
             android:textSize="12sp"
-            android:visibility="visible" />
+            android:visibility="gone" />
     </RelativeLayout>
 
     <Button
@@ -132,15 +135,15 @@
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="@dimen/dp_32"
         android:backgroundTint="#AEAFB4"
         android:enabled="false"
         android:fontFamily="@font/ys_display_medium"
-        android:text="@string/new_playlist"
+        android:text="@string/text_create"
         android:textAllCaps="false"
         android:textColor="@color/text_white"
         android:textSize="@dimen/sp_16"
-        app:cornerRadius="8dp"
+        app:cornerRadius="@dimen/dp_8"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

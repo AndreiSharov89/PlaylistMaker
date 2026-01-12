@@ -1,5 +1,7 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.createplaylist.domain.CreatePlaylistInteractor
+import com.example.playlistmaker.createplaylist.domain.CreatePlaylistInteractorImpl
 import com.example.playlistmaker.library.domain.FavoritesInteractor
 import com.example.playlistmaker.library.domain.FavoritesInteractorImpl
 import com.example.playlistmaker.player.domain.PlayerInteractor
@@ -36,4 +38,6 @@ val domainModule = module {
     }
 
     single<FavoritesInteractor> { FavoritesInteractorImpl(get()) }
+
+    single<CreatePlaylistInteractor> { CreatePlaylistInteractorImpl(get()) }
 }

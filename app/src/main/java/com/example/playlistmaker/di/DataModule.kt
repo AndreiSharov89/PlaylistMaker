@@ -3,6 +3,10 @@ package com.example.playlistmaker.di
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.playlistmaker.createplaylist.data.CreatePlaylistRepositoryImpl
+import com.example.playlistmaker.createplaylist.domain.CreatePlaylistRepository
 import com.example.playlistmaker.db.AppDatabase
 import com.example.playlistmaker.db.TrackDbConverter
 import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
@@ -75,8 +79,14 @@ val dataModule = module {
         HistoryRepositoryImpl(get(), get(), get())
     }
 
+    val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+        }
+    }
+
     single {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "favorites.db")
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "playlist_maker.db")
+            .addMigrations(MIGRATION_1_2)
             .build()
     }
 
@@ -89,4 +99,12 @@ val dataModule = module {
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())
     }
+
+    single {
+        get<AppDatabase>().playlistDao()
+    }
+    single<CreatePlaylistRepository> {
+        CreatePlaylistRepositoryImpl(get(), get())
+    }
+
 }

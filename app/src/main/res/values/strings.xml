@@ -36,6 +36,7 @@
     <string name="text_desc">Описание</string>
     <string name="text_create">Создать</string>
     <string name="text_add_playlist">Добавить в плейлист</string>
+    <string name="playlist_created_message">Плейлист "%1$s" создан</string>
     <string name="dialog_title">Завершить создание плейлиста?</string>
     <string name="dialog_text">Все несохраненные данные будут потеряны</string>
     <string name="dialog_cancel">Отмена</string>
