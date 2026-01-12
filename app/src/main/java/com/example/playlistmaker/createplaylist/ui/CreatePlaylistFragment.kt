@@ -1,7 +1,12 @@
 package com.example.playlistmaker.createplaylist.ui
 
+import android.Manifest
 import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,12 +17,17 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import com.markodevcic.peko.PermissionRequester
+import com.markodevcic.peko.PermissionResult
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -37,6 +47,11 @@ class CreatePlaylistFragment : Fragment() {
                 viewModel.onImageSelected(uri)
             }
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        PermissionRequester.instance()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,11 +96,7 @@ class CreatePlaylistFragment : Fragment() {
             }
         }
         binding.ivImageAlbum.setOnClickListener {
-            try {
-                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            } catch (e: ActivityNotFoundException) {
-                getContent.launch("image/*")
-            }
+            requestPermission()
         }
 
         binding.playlistName.setOnFocusChangeListener { view, hasFocus ->
@@ -174,6 +185,55 @@ class CreatePlaylistFragment : Fragment() {
             .setNeutralButton(R.string.dialog_cancel) { dialog, _ -> dialog.dismiss() }
             .setPositiveButton(R.string.dialog_close) { _, _ -> findNavController().navigateUp() }
             .show()
+    }
+
+    private fun requestPermission() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+        lifecycleScope.launch {
+            PermissionRequester.instance().request(permission).collect { result ->
+                when (result) {
+                    is PermissionResult.Granted -> {
+                        openImagePicker()
+                    }
+
+                    is PermissionResult.Denied.DeniedPermanently -> {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.data = Uri.fromParts("package", requireContext().packageName, null)
+                        requireContext().startActivity(intent)
+                    }
+
+                    is PermissionResult.Denied.NeedsRationale -> {
+                        Snackbar.make(
+                            binding.root,
+                            R.string.storage_permission_rationale,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+
+                    is PermissionResult.Cancelled -> {
+                        //requestPermission()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun openImagePicker() {
+        try {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        } catch (e: ActivityNotFoundException) {
+            getContent.launch("image/*")
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PermissionRequester.instance()
     }
 
     override fun onDestroyView() {

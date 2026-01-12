@@ -42,4 +42,5 @@
     <string name="dialog_cancel">Отмена</string>
     <string name="dialog_close">Завершить</string>
     <string name="list_image_name">list_images</string>
+    <string name="storage_permission_rationale">Доступ к файлам необходим для выбора обложки альбома.</string>
 </resources>

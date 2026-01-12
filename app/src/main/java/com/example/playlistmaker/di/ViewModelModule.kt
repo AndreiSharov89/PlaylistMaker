@@ -30,10 +30,11 @@ val viewModelModule = module {
         FavoritesViewModel(get())
     }
     viewModel {
-        PlaylistsViewModel()
-    }
-    viewModel {
         CreatePlaylistViewModel(get())
+    }
+
+    viewModel {
+        PlaylistsViewModel(get())
     }
 
 }
