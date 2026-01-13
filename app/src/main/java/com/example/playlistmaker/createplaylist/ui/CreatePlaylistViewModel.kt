@@ -30,7 +30,7 @@ class CreatePlaylistViewModel(
     }
 
     fun createPlaylist(name: String, description: String, coverImageUri: Uri? = null) {
-        if (name.isBlank() || description.isBlank()) return
+        if (name.isBlank()) return
         viewModelScope.launch {
             try {
                 saveImageJob?.join()

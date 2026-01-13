@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CreatePlaylistInteractor {
     suspend fun createPlaylist(name: String, description: String, coverImagePath: String)
-    fun getAllPlaylists(): Flow<List<PlaylistEntity>>
+    fun getAllPlaylists(): Flow<List<Playlist>>
     suspend fun updatePlaylist(playlist: PlaylistEntity)
 
     /*

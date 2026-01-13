@@ -20,7 +20,7 @@ class CreatePlaylistInteractorImpl(
         playlistRepository.createPlaylist(playlist)
     }
 
-    override fun getAllPlaylists(): Flow<List<PlaylistEntity>> {
+    override fun getAllPlaylists(): Flow<List<Playlist>> {
         return playlistRepository.getAllPlaylists()
     }
 

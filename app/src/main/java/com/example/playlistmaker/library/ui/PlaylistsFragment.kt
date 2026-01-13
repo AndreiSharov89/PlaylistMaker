@@ -86,7 +86,10 @@ class PlaylistsFragment : Fragment() {
 
     private fun showPlaylistCreatedSnackbar(playlistName: String) {
         val message = getString(R.string.playlist_created_message, playlistName)
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
+        val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
+        val bottomNav = requireActivity().findViewById<View>(R.id.bottomNavigationView)
+        snackbar.anchorView = bottomNav
+        snackbar.show()
     }
 
     override fun onDestroyView() {

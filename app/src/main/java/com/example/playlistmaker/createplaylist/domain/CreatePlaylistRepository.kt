@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface CreatePlaylistRepository {
     suspend fun createPlaylist(playlist: PlaylistEntity)
     suspend fun updatePlaylist(playlist: PlaylistEntity)
-    fun getAllPlaylists(): Flow<List<PlaylistEntity>>
+    fun getAllPlaylists(): Flow<List<Playlist>>
 
     // Методы для треков
     /*    suspend fun addTrackToPlaylist(track: PlaylistTrackEntity)
