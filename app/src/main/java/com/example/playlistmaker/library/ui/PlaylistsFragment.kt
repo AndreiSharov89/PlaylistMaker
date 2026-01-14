@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -86,10 +87,25 @@ class PlaylistsFragment : Fragment() {
 
     private fun showPlaylistCreatedSnackbar(playlistName: String) {
         val message = getString(R.string.playlist_created_message, playlistName)
-        val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
         val bottomNav = requireActivity().findViewById<View>(R.id.bottomNavigationView)
-        snackbar.anchorView = bottomNav
-        snackbar.show()
+        if (bottomNav == null) {
+            Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+                .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.text_black))
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.text_white))
+                .show()
+            return
+        }
+        bottomNav.isVisible = false
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    bottomNav.isVisible = true
+                }
+            })
+            .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.text_black))
+            .setTextColor(ContextCompat.getColor(requireContext(), R.color.text_white))
+            .show()
     }
 
     override fun onDestroyView() {
