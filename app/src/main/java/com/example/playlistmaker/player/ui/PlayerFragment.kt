@@ -5,6 +5,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.search.domain.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -66,10 +68,25 @@ class PlayerFragment : Fragment() {
             viewModel.onFavoriteClicked()
         }
         viewModel.preparePlayer()
+
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+        savedStateHandle?.getLiveData<String>("new_playlist_name")
+            ?.observe(viewLifecycleOwner) { playlistName ->
+                if (playlistName != null) {
+                    showPlaylistCreatedSnackbar(playlistName)
+                    savedStateHandle.remove<String>("new_playlist_name")
+                }
+            }
+        viewModel.observeTrackAddedToPlaylistEvent().observe(viewLifecycleOwner) { result ->
+            showPlaylistCreatedSnackbar(result)
+
+        }
     }
 
     private fun setupBottomSheet() {
-        bottomSheetAdapter = BottomsheetPlaylistAdapter { }
+        bottomSheetAdapter = BottomsheetPlaylistAdapter { playlist ->
+            viewModel.addTrackToPlaylist(playlist)
+        }
 
         binding.playlistsRecyclerView.layoutManager =
             LinearLayoutManager(requireContext())
@@ -186,6 +203,18 @@ class PlayerFragment : Fragment() {
             .into(binding.ivCover)
     }
 
+    private fun showPlaylistCreatedSnackbar(playlistName: String) {
+        val message = getString(R.string.playlist_created_message, playlistName)
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                }
+            })
+            .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.text_black))
+            .setTextColor(ContextCompat.getColor(requireContext(), R.color.text_white))
+            .show()
+    }
 
     private fun dpToPx(dp: Float): Int =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, dp, resources.displayMetrics).toInt()

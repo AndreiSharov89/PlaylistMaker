@@ -33,4 +33,33 @@ class TrackDbConverter {
             isFavorite = true
         )
     }
+    fun mapToPlaylistTrack(track: Track): TrackInPlaylistEntity {
+        return TrackInPlaylistEntity(
+            id = track.trackId.toString(),
+            coverUrl = track.artworkUrl100,
+            title = track.trackName,
+            artist = track.artistName,
+            album = track.collectionName,
+            releaseYear = track.releaseDate?.take(4)?.toIntOrNull() ?: 0,
+            genre = track.primaryGenreName.orEmpty(),
+            country = track.country.orEmpty(),
+            duration = track.trackTimeMillis.toString(),
+            fileUrl = track.previewUrl.orEmpty()
+        )
+    }
+
+    fun mapFromPlaylistTrack(trackEntity: TrackInPlaylistEntity): Track {
+        return Track(
+            trackId = trackEntity.id.toLongOrNull() ?: 0L,
+            trackName = trackEntity.title,
+            artistName = trackEntity.artist,
+            trackTimeMillis = trackEntity.duration.toInt(),
+            artworkUrl100 = trackEntity.coverUrl,
+            collectionName = trackEntity.album,
+            releaseDate = trackEntity.releaseYear.toString(),
+            primaryGenreName = trackEntity.genre,
+            country = trackEntity.country,
+            previewUrl = trackEntity.fileUrl
+        )
+    }
 }

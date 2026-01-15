@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.playlistmaker.createplaylist.data.CreatePlaylistRepositoryImpl
 import com.example.playlistmaker.createplaylist.domain.CreatePlaylistRepository
 import com.example.playlistmaker.db.AppDatabase
+import com.example.playlistmaker.db.PlaylistDbConverter
 import com.example.playlistmaker.db.TrackDbConverter
 import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
 import com.example.playlistmaker.library.domain.FavoritesRepository
@@ -83,10 +84,31 @@ val dataModule = module {
         override fun migrate(database: SupportSQLiteDatabase) {
         }
     }
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL(
+                """
+        CREATE TABLE IF NOT EXISTS
+        `track_in_playlist` (
+           `id` TEXT NOT NULL, 
+           `title` TEXT NOT NULL,`artist` TEXT NOT NULL, 
+           `duration` TEXT NOT NULL, 
+           `album` TEXT, 
+           `releaseYear` INTEGER NOT NULL, 
+           `genre` TEXT NOT NULL, 
+           `country` TEXT NOT NULL, 
+           `coverUrl` TEXT NOT NULL, 
+           `fileUrl` TEXT NOT NULL, 
+            PRIMARY KEY(`id`)
+        )
+                    """
+            )
+        }
+    }
 
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "playlist_maker.db")
-            .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
     }
 
@@ -94,7 +116,7 @@ val dataModule = module {
         get<AppDatabase>().favoritesDao()
     }
 
-    factory { TrackDbConverter() }
+    single { TrackDbConverter() }
 
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())
@@ -103,8 +125,21 @@ val dataModule = module {
     single {
         get<AppDatabase>().playlistDao()
     }
+
+    single { PlaylistDbConverter() }
+
     single<CreatePlaylistRepository> {
-        CreatePlaylistRepositoryImpl(get(), get())
+        CreatePlaylistRepositoryImpl(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
+    single {
+        get<AppDatabase>().trackInPlaylistDao()
     }
 
 }

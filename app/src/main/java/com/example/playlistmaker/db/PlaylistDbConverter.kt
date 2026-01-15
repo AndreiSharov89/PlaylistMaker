@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken
 class PlaylistDbConverter {
     fun map(playlist: Playlist): PlaylistEntity {
         return PlaylistEntity(
+            id = playlist.id,
             name = playlist.name,
             description = playlist.description,
             coverImagePath = playlist.coverImagePath,

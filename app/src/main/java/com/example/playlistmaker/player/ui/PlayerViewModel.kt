@@ -9,6 +9,7 @@ import com.example.playlistmaker.createplaylist.domain.Playlist
 import com.example.playlistmaker.library.domain.FavoritesInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.utils.SingleLiveEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -26,6 +27,10 @@ class PlayerViewModel(
     private val playlistsLiveData = MutableLiveData<List<Playlist>>()
     fun observePlaylists(): LiveData<List<Playlist>> = playlistsLiveData
     private var timerJob: Job? = null
+
+    private val trackAddedToPlaylistEvent = SingleLiveEvent<String>()
+    fun observeTrackAddedToPlaylistEvent(): LiveData<String> = trackAddedToPlaylistEvent
+
 
     fun preparePlayer() {
         if (uiStateLiveData.value is PlayerUiState.Content) {
@@ -144,6 +149,17 @@ class PlayerViewModel(
             }
         }
     }
+    fun addTrackToPlaylist(playlist: Playlist) {
+        if (playlist.trackIds.contains(track.trackId.toString())) {
+            trackAddedToPlaylistEvent.postValue("Трек уже добавлен в плейлист: ${playlist.name}")
+            return
+        }
+        viewModelScope.launch {
+            playlistsInteractor.addTracksAndUpdatePlaylist(track, playlist)
+            trackAddedToPlaylistEvent.postValue("Добавлено в плейлист ${playlist.name}")
+        }
+    }
+
     fun loadPlaylists() {
         if (playlistsLiveData.value != null) return
         viewModelScope.launch {
