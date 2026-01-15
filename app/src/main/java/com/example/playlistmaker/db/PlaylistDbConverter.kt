@@ -4,26 +4,27 @@ import com.example.playlistmaker.createplaylist.domain.Playlist
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class PlaylistDbConverter {
-    fun map(playlist: Playlist): PlaylistEntity {
-        return PlaylistEntity(
+class PlaylistDbConverter(private val gson: Gson = Gson()) {
+    fun map(playlist: PlaylistEntity): Playlist {
+        val type = object : TypeToken<List<String>>() {}.type
+        return Playlist(
             id = playlist.id,
             name = playlist.name,
             description = playlist.description,
             coverImagePath = playlist.coverImagePath,
-            trackCount = playlist.trackCount,
-            trackIds = Gson().toJson(playlist.trackIds)
+            trackIds = gson.fromJson(playlist.trackIds, type) ?: emptyList(),
+            trackCount = playlist.trackCount
         )
     }
 
-    fun map(entity: PlaylistEntity): Playlist {
-        return Playlist(
-            id = entity.id,
-            name = entity.name,
-            description = entity.description,
-            coverImagePath = entity.coverImagePath,
-            trackCount = entity.trackCount,
-            trackIds = Gson().fromJson(entity.trackIds, object : TypeToken<List<Long>>() {}.type)
+    fun map(playlist: Playlist): PlaylistEntity {
+        return PlaylistEntity(
+            id = playlist.id ?: 0,
+            name = playlist.name,
+            description = playlist.description ?: "",
+            coverImagePath = playlist.coverImagePath,
+            trackIds = gson.toJson(playlist.trackIds),
+            trackCount = playlist.trackIds.size
         )
     }
 }

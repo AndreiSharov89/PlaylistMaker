@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Playlist maker</string>
     <string name="search">Поиск</string>
@@ -43,13 +44,9 @@
     <string name="storage_permission_rationale">Доступ к файлам необходим для выбора обложки альбома.</string>
 
     <plurals name="track_count">
-        <!-- Для чисел, оканчивающихся на 1 (кроме 11) -->
         <item quantity="one">%d трек</item>
-        <!-- Для чисел, оканчивающихся на 2, 3, 4 (кроме 12, 13, 14) -->
-        <item quantity="few">%d трека</item>
-        <!-- Для 0 и чисел, оканчивающихся на 5-9, 0, или 11-14 -->
+        <item quantity="few">%d трека</item>  <!--a few part doesnt work if locale isnt RU-->
         <item quantity="many">%d треков</item>
-        <!-- Резервный вариант, если ни одно правило не подошло -->
         <item quantity="other">%d треков</item>
     </plurals>
 </resources>

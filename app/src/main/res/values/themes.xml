@@ -12,6 +12,12 @@
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 
+    <style name="App.MaterialAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/App.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/App.DialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/App.DialogButton</item>
+    </style>
+
     <style name="TextRegular12">
         <item name="android:textSize">12sp</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>

@@ -36,11 +36,16 @@ class PlaylistAdapter(
 
         fun bind(playlist: Playlist) {
             binding.playlistName.text = playlist.name
-            binding.trackCount.text = itemView.resources.getQuantityString(
-                R.plurals.track_count ?: 0,
-                playlist.trackCount,
-                playlist.trackCount
-            )
+            val count = playlist.trackCount
+            val lastDigit = count % 10
+            val lastTwoDigits = count % 100
+
+            val tracksString = when {
+                lastDigit == 1 && lastTwoDigits != 11 -> "$count трек"
+                lastDigit in 2..4 && lastTwoDigits !in 12..14 -> "$count трека"
+                else -> "$count треков"
+            }
+            binding.trackCount.text = tracksString
 
             Glide.with(itemView)
                 .load(playlist.coverImagePath)

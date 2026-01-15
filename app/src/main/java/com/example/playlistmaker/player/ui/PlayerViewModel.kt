@@ -28,8 +28,8 @@ class PlayerViewModel(
     fun observePlaylists(): LiveData<List<Playlist>> = playlistsLiveData
     private var timerJob: Job? = null
 
-    private val trackAddedToPlaylistEvent = SingleLiveEvent<String>()
-    fun observeTrackAddedToPlaylistEvent(): LiveData<String> = trackAddedToPlaylistEvent
+    private val snackbarMessageEvent = SingleLiveEvent<String>()
+    fun observeSnackbarMessage(): LiveData<String> = snackbarMessageEvent
 
 
     fun preparePlayer() {
@@ -151,13 +151,17 @@ class PlayerViewModel(
     }
     fun addTrackToPlaylist(playlist: Playlist) {
         if (playlist.trackIds.contains(track.trackId.toString())) {
-            trackAddedToPlaylistEvent.postValue("Трек уже добавлен в плейлист: ${playlist.name}")
+            snackbarMessageEvent.postValue("Трек уже добавлен в плейлист: ${playlist.name}")
             return
         }
         viewModelScope.launch {
             playlistsInteractor.addTracksAndUpdatePlaylist(track, playlist)
-            trackAddedToPlaylistEvent.postValue("Добавлено в плейлист ${playlist.name}")
+            snackbarMessageEvent.postValue("Добавлено в плейлист ${playlist.name}")
         }
+    }
+
+    fun onPlaylistCreated(playlistName: String) {
+        snackbarMessageEvent.postValue("Плейлист \"$playlistName\" создан")
     }
 
     fun loadPlaylists() {

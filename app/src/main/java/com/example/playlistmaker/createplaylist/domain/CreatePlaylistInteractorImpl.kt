@@ -1,22 +1,22 @@
 package com.example.playlistmaker.createplaylist.domain
 
 import android.net.Uri
-import com.example.playlistmaker.db.PlaylistEntity
 import com.example.playlistmaker.search.domain.Track
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 
 class CreatePlaylistInteractorImpl(
     private val playlistRepository: CreatePlaylistRepository,
 ) : CreatePlaylistInteractor {
 
-    override suspend fun createPlaylist(name: String, description: String, coverImagePath: String) {
-        val playlist = PlaylistEntity(
+    override suspend fun createPlaylist(
+        name: String,
+        description: String?,
+        coverImagePath: String
+    ) {
+        val playlist = Playlist(
             name = name,
             description = description,
-            coverImagePath = coverImagePath,
-            trackIds = Gson().toJson(emptyList<Long>()),
-            trackCount = 0
+            coverImagePath = coverImagePath
         )
         playlistRepository.createPlaylist(playlist)
     }
@@ -25,7 +25,7 @@ class CreatePlaylistInteractorImpl(
         return playlistRepository.getAllPlaylists()
     }
 
-    override suspend fun updatePlaylist(playlist: PlaylistEntity) {
+    override suspend fun updatePlaylist(playlist: Playlist) {
         playlistRepository.updatePlaylist(playlist)
     }
 

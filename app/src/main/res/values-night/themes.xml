@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
@@ -7,5 +7,16 @@
         <item name="colorSecondary">@color/YP_black</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorOnSecondary">@color/white</item>
+        <item name="materialAlertDialogTheme">@style/App.MaterialAlertDialogTheme</item>
+    </style>
+
+    <style name="App.MaterialAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/App.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/App.DialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/App.DialogButton</item>
+    </style>
+
+    <style name="App.DialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/white</item>
     </style>
 </resources>

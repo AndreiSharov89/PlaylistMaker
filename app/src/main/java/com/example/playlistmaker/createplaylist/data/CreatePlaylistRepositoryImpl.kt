@@ -7,11 +7,9 @@ import com.example.playlistmaker.createplaylist.domain.CreatePlaylistRepository
 import com.example.playlistmaker.createplaylist.domain.Playlist
 import com.example.playlistmaker.db.PlaylistDao
 import com.example.playlistmaker.db.PlaylistDbConverter
-import com.example.playlistmaker.db.PlaylistEntity
 import com.example.playlistmaker.db.TrackDbConverter
 import com.example.playlistmaker.db.TrackIntPlaylistDao
 import com.example.playlistmaker.search.domain.Track
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
@@ -21,31 +19,21 @@ class CreatePlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,
     private val trackInPlaylistDao: TrackIntPlaylistDao,
     private val trackDbConverter: TrackDbConverter,
-    private val PlaylistDbConverter: PlaylistDbConverter,
-    private val gson: Gson,
+    private val playlistDbConverter: PlaylistDbConverter,
     private val context: Context
 ) : CreatePlaylistRepository {
 
-    override suspend fun createPlaylist(playlist: PlaylistEntity) {
-        playlistDao.insertPlaylist(playlist)
+    override suspend fun createPlaylist(playlist: Playlist) {
+        playlistDao.insertPlaylist(playlistDbConverter.map(playlist))
     }
 
-    override suspend fun updatePlaylist(playlist: PlaylistEntity) {
-        playlistDao.updatePlaylist(playlist)
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        playlistDao.updatePlaylist(playlistDbConverter.map(playlist))
     }
 
     override fun getAllPlaylists(): Flow<List<Playlist>> {
         return playlistDao.getAllPlaylists().map { playlists ->
-            playlists.map { playlistEntity ->
-                Playlist(
-                    id = playlistEntity.id,
-                    name = playlistEntity.name,
-                    description = playlistEntity.description,
-                    coverImagePath = playlistEntity.coverImagePath,
-                    trackIds = playlistEntity.trackIds,
-                    trackCount = playlistEntity.trackCount
-                )
-            }
+            playlists.map { playlistEntity -> playlistDbConverter.map(playlistEntity) }
         }
     }
 
@@ -57,31 +45,26 @@ class CreatePlaylistRepositoryImpl(
     override suspend fun getTrackById(id: String): Track? {
         val trackEntity = trackInPlaylistDao.getTrackById(id)
         return trackEntity?.let { trackDbConverter.mapFromPlaylistTrack(it) }
-
     }
 
     override suspend fun getAllTracks(): List<Track> {
         val trackEntities = trackInPlaylistDao.getAllTracks()
         return trackEntities.map { trackEntity -> trackDbConverter.mapFromPlaylistTrack(trackEntity) }
-
     }
 
     override suspend fun addTrackAndUpdatePlaylist(track: Track, playlist: Playlist) {
         val trackEntity = trackDbConverter.mapToPlaylistTrack(track)
         trackInPlaylistDao.insertTrackToPlaylist(trackEntity)
-        val typeToken = object : com.google.gson.reflect.TypeToken<MutableList<String>>() {}.type
-        val trackIdList: MutableList<String> =
-            gson.fromJson(playlist.trackIds, typeToken) ?: mutableListOf()
-        trackIdList.add(track.trackId.toString())
-        val updatedTrackIdsJson = gson.toJson(trackIdList)
-        val updatedPlaylist = playlist.copy(
-            trackIds = updatedTrackIdsJson,
-            trackCount = trackIdList.size
-        )
-        val playlistEntityToUpdate = PlaylistDbConverter.map(updatedPlaylist)
-        playlistDao.updatePlaylist(playlistEntityToUpdate)
-    }
 
+        val updatedTrackIds = playlist.trackIds.toMutableList()
+        updatedTrackIds.add(track.trackId.toString())
+
+        val updatedPlaylist = playlist.copy(
+            trackIds = updatedTrackIds,
+            trackCount = updatedTrackIds.size
+        )
+        updatePlaylist(updatedPlaylist)
+    }
 
     override suspend fun saveImage(uri: Uri, fileName: String): Uri {
         val storageDir = File(context.filesDir, "playlist_covers")

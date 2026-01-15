@@ -126,11 +126,10 @@ val dataModule = module {
         get<AppDatabase>().playlistDao()
     }
 
-    single { PlaylistDbConverter() }
+    single { PlaylistDbConverter(get()) }
 
     single<CreatePlaylistRepository> {
         CreatePlaylistRepositoryImpl(
-            get(),
             get(),
             get(),
             get(),

@@ -31,102 +31,116 @@
         app:layout_constraintStart_toEndOf="@+id/iv_plBack"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/iv_imageAlbum"
-        android:layout_width="match_parent"
+    <ScrollView
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="@dimen/dp_28"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/dashed_rectangle"
-        android:scaleType="center"
-        android:src="@drawable/image_add_photo_100"
-        android:clickable="true"
-        app:layout_constraintDimensionRatio="h,1:1"
+        app:layout_constraintBottom_toTopOf="@+id/create_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_plBack" />
+        app:layout_constraintTop_toBottomOf="@+id/tittle_textView">
 
-    <RelativeLayout
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="@dimen/dp_16"
-        app:layout_constraintTop_toBottomOf="@id/iv_imageAlbum">
-
-        <EditText
-            android:id="@+id/playlist_name"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/edit_text_border_selector"
-            android:hint="@string/text_name"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:lines="1"
-            android:paddingStart="@dimen/dp_16"
-            android:singleLine="true"
-            android:textColor="@color/text_black"
-            android:textColorHint="@color/text_black"
-            android:textCursorDrawable="@drawable/edit_text_cursor"
-            android:textSize="@dimen/sp_16" />
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/clue_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="4dp"
-            android:background="@color/background_secondary"
-            android:padding="4dp"
-            android:text="@string/text_name"
-            android:textColor="@color/clue_gray"
-            android:textSize="12sp"
-            android:visibility="gone" />
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/iv_imageAlbum"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/dashed_rectangle"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_add_photo_100"
+                app:layout_constraintDimensionRatio="h,1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-    <RelativeLayout
-        android:id="@+id/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name">
+            <RelativeLayout
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_imageAlbum">
 
-        <EditText
-            android:id="@+id/playlist_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/edit_text_border_selector"
-            android:hint="@string/text_desc"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:lines="1"
-            android:paddingStart="16dp"
-            android:singleLine="true"
-            android:textColor="@color/text_black"
-            android:textColorHint="@color/text_black"
-            android:textCursorDrawable="@drawable/edit_text_cursor"
-            android:textSize="@dimen/sp_16" />
+                <EditText
+                    android:id="@+id/playlist_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/edit_text_border_selector"
+                    android:hint="@string/text_name"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:paddingStart="@dimen/dp_16"
+                    android:singleLine="true"
+                    android:textColor="@color/text_black"
+                    android:textColorHint="@color/text_black"
+                    android:textCursorDrawable="@drawable/edit_text_cursor"
+                    android:textSize="@dimen/sp_16" />
 
-        <TextView
-            android:id="@+id/clue_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="4dp"
-            android:background="@color/background_secondary"
-            android:padding="4dp"
-            android:text="@string/text_desc"
-            android:textColor="@color/clue_gray"
-            android:textSize="12sp"
-            android:visibility="gone" />
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/clue_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/background_secondary"
+                    android:padding="4dp"
+                    android:text="@string/text_name"
+                    android:textColor="@color/clue_gray"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/name">
+
+                <EditText
+                    android:id="@+id/playlist_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/edit_text_border_selector"
+                    android:hint="@string/text_desc"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:paddingStart="16dp"
+                    android:singleLine="true"
+                    android:textColor="@color/text_black"
+                    android:textColorHint="@color/text_black"
+                    android:textCursorDrawable="@drawable/edit_text_cursor"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/clue_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/background_secondary"
+                    android:padding="4dp"
+                    android:text="@string/text_desc"
+                    android:textColor="@color/clue_gray"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/create_button"

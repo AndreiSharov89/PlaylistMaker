@@ -20,6 +20,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
@@ -152,11 +154,16 @@ class CreatePlaylistFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.selectedCoverUri.observe(viewLifecycleOwner) { uri ->
+            binding.ivImageAlbum.setBackgroundResource(R.drawable.rounded_corners)
             Glide.with(requireContext())
                 .load(uri)
                 .placeholder(R.drawable.track_placeholder_312)
-                .centerCrop()
-                .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.dp_8)))
+                .transform(
+                    MultiTransformation(
+                        CenterCrop(),
+                        RoundedCorners(resources.getDimensionPixelSize(R.dimen.dp_8))
+                    )
+                )
                 .into(binding.ivImageAlbum)
         }
 

@@ -69,17 +69,17 @@ class PlayerFragment : Fragment() {
         }
         viewModel.preparePlayer()
 
+        viewModel.observeSnackbarMessage().observe(viewLifecycleOwner) { message ->
+            showSnackbar(message)
+        }
+
         val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
         savedStateHandle?.getLiveData<String>("new_playlist_name")
             ?.observe(viewLifecycleOwner) { playlistName ->
                 if (playlistName != null) {
-                    showPlaylistCreatedSnackbar(playlistName)
+                    viewModel.onPlaylistCreated(playlistName)
                     savedStateHandle.remove<String>("new_playlist_name")
                 }
-            }
-        viewModel.observeTrackAddedToPlaylistEvent().observe(viewLifecycleOwner) { result ->
-            showPlaylistCreatedSnackbar(result)
-
         }
     }
 
@@ -203,8 +203,7 @@ class PlayerFragment : Fragment() {
             .into(binding.ivCover)
     }
 
-    private fun showPlaylistCreatedSnackbar(playlistName: String) {
-        val message = getString(R.string.playlist_created_message, playlistName)
+    private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
             .addCallback(object : Snackbar.Callback() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
