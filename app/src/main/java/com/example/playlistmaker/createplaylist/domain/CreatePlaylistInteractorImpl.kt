@@ -37,7 +37,7 @@ class CreatePlaylistInteractorImpl(
         return playlistRepository.getTrackById(id)
     }
 
-    override suspend fun getAllTracks(): List<Track> {
+    override fun getAllTracks(): Flow<List<Track>> {
         return playlistRepository.getAllTracks()
     }
 

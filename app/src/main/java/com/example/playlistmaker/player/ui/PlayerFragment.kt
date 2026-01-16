@@ -72,6 +72,18 @@ class PlayerFragment : Fragment() {
         viewModel.observeSnackbarMessage().observe(viewLifecycleOwner) { message ->
             showSnackbar(message)
         }
+        viewModel.observeAddToPlaylistResult().observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is AddToPlaylistResult.Added -> {
+                    showSnackbar("Добавлено в плейлист ${result.playlistName}")
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+
+                is AddToPlaylistResult.AlreadyAdded -> {
+                    showSnackbar("Трек уже добавлен в плейлист ${result.playlistName}")
+                }
+            }
+        }
 
         val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
         savedStateHandle?.getLiveData<String>("new_playlist_name")
@@ -80,7 +92,7 @@ class PlayerFragment : Fragment() {
                     viewModel.onPlaylistCreated(playlistName)
                     savedStateHandle.remove<String>("new_playlist_name")
                 }
-        }
+            }
     }
 
     private fun setupBottomSheet() {
@@ -92,7 +104,7 @@ class PlayerFragment : Fragment() {
             LinearLayoutManager(requireContext())
         binding.playlistsRecyclerView.adapter = bottomSheetAdapter
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).apply {
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
 

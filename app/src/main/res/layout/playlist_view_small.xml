@@ -14,7 +14,6 @@
             android:id="@+id/playlistImage"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="@dimen/dp_12"
             android:background="@drawable/rounded_corners"
             android:scaleType="centerCrop"
             android:src="@drawable/track_placeholder_45"

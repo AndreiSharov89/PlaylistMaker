@@ -12,7 +12,7 @@ interface CreatePlaylistInteractor {
 
     suspend fun addTrackToPlaylist(track: Track)
     suspend fun getTrackById(id: String): Track?
-    suspend fun getAllTracks(): List<Track>
+    fun getAllTracks(): Flow<List<Track>>
 
     suspend fun addTracksAndUpdatePlaylist(track: Track, playlist: Playlist)
 

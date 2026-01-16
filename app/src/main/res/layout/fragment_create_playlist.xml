@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_secondary">
+    android:background="@color/background_secondary"
+    android:fitsSystemWindows="true">
 
     <ImageView
         android:id="@+id/iv_plBack"
@@ -35,6 +36,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/dp_28"
+        android:clipToPadding="false"
+        android:fillViewport="true"
         app:layout_constraintBottom_toTopOf="@+id/create_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,11 +55,12 @@
                 android:layout_marginEnd="24dp"
                 android:background="@drawable/dashed_rectangle"
                 android:clickable="true"
-                android:scaleType="centerCrop"
+                android:scaleType="center"
                 android:src="@drawable/image_add_photo_100"
                 app:layout_constraintDimensionRatio="h,1:1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <RelativeLayout
                 android:id="@+id/name"
@@ -83,6 +87,8 @@
                     android:textColor="@color/text_black"
                     android:textColorHint="@color/text_black"
                     android:textCursorDrawable="@drawable/edit_text_cursor"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textSize="@dimen/sp_16" />
 
                 <TextView
@@ -123,6 +129,8 @@
                     android:textColor="@color/text_black"
                     android:textColorHint="@color/text_black"
                     android:textCursorDrawable="@drawable/edit_text_cursor"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:textSize="@dimen/sp_16" />
 
                 <TextView

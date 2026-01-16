@@ -23,7 +23,8 @@ class PlayerViewModel(
     val highResCoverUrl: String = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     private val uiStateLiveData = MutableLiveData<PlayerUiState>(PlayerUiState.Preparing)
     val observeUiStateLiveData: LiveData<PlayerUiState> = uiStateLiveData
-
+    private val addToPlaylistResult = MutableLiveData<AddToPlaylistResult>()
+    fun observeAddToPlaylistResult(): LiveData<AddToPlaylistResult> = addToPlaylistResult
     private val playlistsLiveData = MutableLiveData<List<Playlist>>()
     fun observePlaylists(): LiveData<List<Playlist>> = playlistsLiveData
     private var timerJob: Job? = null
@@ -149,14 +150,21 @@ class PlayerViewModel(
             }
         }
     }
+
     fun addTrackToPlaylist(playlist: Playlist) {
-        if (playlist.trackIds.contains(track.trackId.toString())) {
-            snackbarMessageEvent.postValue("Трек уже добавлен в плейлист: ${playlist.name}")
-            return
-        }
         viewModelScope.launch {
-            playlistsInteractor.addTracksAndUpdatePlaylist(track, playlist)
-            snackbarMessageEvent.postValue("Добавлено в плейлист ${playlist.name}")
+            val isAlreadyAdded = playlist.trackIds.contains(track.trackId.toString())
+
+            if (isAlreadyAdded) {
+                addToPlaylistResult.postValue(
+                    AddToPlaylistResult.AlreadyAdded(playlist.name)
+                )
+            } else {
+                playlistsInteractor.addTracksAndUpdatePlaylist(track, playlist)
+                addToPlaylistResult.postValue(
+                    AddToPlaylistResult.Added(playlist.name)
+                )
+            }
         }
     }
 

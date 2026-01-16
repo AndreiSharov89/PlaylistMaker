@@ -47,9 +47,12 @@ class CreatePlaylistRepositoryImpl(
         return trackEntity?.let { trackDbConverter.mapFromPlaylistTrack(it) }
     }
 
-    override suspend fun getAllTracks(): List<Track> {
-        val trackEntities = trackInPlaylistDao.getAllTracks()
-        return trackEntities.map { trackEntity -> trackDbConverter.mapFromPlaylistTrack(trackEntity) }
+    override fun getAllTracks(): Flow<List<Track>> {
+        return trackInPlaylistDao.getAllTracks().map { trackEntities ->
+            trackEntities.map { entity ->
+                trackDbConverter.mapFromPlaylistTrack(entity)
+            }
+        }
     }
 
     override suspend fun addTrackAndUpdatePlaylist(track: Track, playlist: Playlist) {
