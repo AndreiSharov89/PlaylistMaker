@@ -4,9 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.createplaylist.domain.CreatePlaylistInteractor
+import com.example.playlistmaker.createplaylist.domain.Playlist
 import com.example.playlistmaker.library.domain.FavoritesInteractor
 import com.example.playlistmaker.player.domain.PlayerInteractor
 import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.utils.SingleLiveEvent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -14,14 +17,26 @@ import kotlinx.coroutines.launch
 class PlayerViewModel(
     private val track: Track,
     private val player: PlayerInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistsInteractor: CreatePlaylistInteractor
 ) : ViewModel() {
     val highResCoverUrl: String = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
     private val uiStateLiveData = MutableLiveData<PlayerUiState>(PlayerUiState.Preparing)
     val observeUiStateLiveData: LiveData<PlayerUiState> = uiStateLiveData
+    private val addToPlaylistResult = MutableLiveData<AddToPlaylistResult>()
+    fun observeAddToPlaylistResult(): LiveData<AddToPlaylistResult> = addToPlaylistResult
+    private val playlistsLiveData = MutableLiveData<List<Playlist>>()
+    fun observePlaylists(): LiveData<List<Playlist>> = playlistsLiveData
     private var timerJob: Job? = null
 
+    private val snackbarMessageEvent = SingleLiveEvent<String>()
+    fun observeSnackbarMessage(): LiveData<String> = snackbarMessageEvent
+
+
     fun preparePlayer() {
+        if (uiStateLiveData.value is PlayerUiState.Content) {
+            return
+        }
         val currentIsFavorite =
             (uiStateLiveData.value as? PlayerUiState.Content)?.isFavorite ?: track.isFavorite
         player.preparePlayer(
@@ -132,6 +147,36 @@ class PlayerViewModel(
                 favoritesInteractor.addTrack(track)
             } else {
                 favoritesInteractor.removeTrack(track)
+            }
+        }
+    }
+
+    fun addTrackToPlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            val isAlreadyAdded = playlist.trackIds.contains(track.trackId.toString())
+
+            if (isAlreadyAdded) {
+                addToPlaylistResult.postValue(
+                    AddToPlaylistResult.AlreadyAdded(playlist.name)
+                )
+            } else {
+                playlistsInteractor.addTracksAndUpdatePlaylist(track, playlist)
+                addToPlaylistResult.postValue(
+                    AddToPlaylistResult.Added(playlist.name)
+                )
+            }
+        }
+    }
+
+    fun onPlaylistCreated(playlistName: String) {
+        snackbarMessageEvent.postValue("Плейлист \"$playlistName\" создан")
+    }
+
+    fun loadPlaylists() {
+        if (playlistsLiveData.value != null) return
+        viewModelScope.launch {
+            playlistsInteractor.getAllPlaylists().collect {
+                playlistsLiveData.postValue(it)
             }
         }
     }

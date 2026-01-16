@@ -6,6 +6,7 @@ import com.example.playlistmaker.player.domain.PlayerRepository
 class PlayerMediaPlayer(private val mediaPlayer: MediaPlayer) : PlayerRepository {
 
     override fun preparePlayer(url: String, onReady: () -> Unit, onCompletion: () -> Unit) {
+        mediaPlayer.reset()
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener { onReady() }

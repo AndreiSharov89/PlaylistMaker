@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Playlist maker</string>
     <string name="search">Поиск</string>
@@ -27,9 +28,25 @@
     <string name="btn_add_to_playlist">Добавить в плейлист</string>
     <string name="btn_like">Нравится</string>
     <string name="btn_play">Воспроизведение/пауза</string>
-    <string name="empty_favorites" translatable="false">Ваша медиатека пуста</string>
-    <string name="no_playlists" translatable="false">Вы не создали \nни одного плейлиста</string>
-    <string name="new_playlist" translatable="false">Новый плейлист</string>
-    <string name="tab_favorites" translatable="false">Избранные треки</string>
-    <string name="tab_playlists" translatable="false">Плейлисты</string>
+    <string name="empty_favorites">Ваша медиатека пуста</string>
+    <string name="no_playlists">Вы не создали \nни одного плейлиста</string>
+    <string name="new_playlist">Новый плейлист</string>
+    <string name="tab_favorites">Избранные треки</string>
+    <string name="tab_playlists">Плейлисты</string>
+    <string name="text_name">Название*</string>
+    <string name="text_desc">Описание</string>
+    <string name="text_create">Создать</string>
+    <string name="playlist_created_message">Плейлист "%1$s" создан</string>
+    <string name="dialog_title">Завершить создание плейлиста?</string>
+    <string name="dialog_text">Все несохраненные данные будут потеряны</string>
+    <string name="dialog_cancel">Отмена</string>
+    <string name="dialog_close">Завершить</string>
+    <string name="storage_permission_rationale">Доступ к файлам необходим для выбора обложки альбома.</string>
+
+    <plurals name="track_count">
+        <item quantity="one">%d трек</item>
+        <item quantity="few">%d трека</item>  <!--a few part doesnt work if locale isnt RU-->
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d треков</item>
+    </plurals>
 </resources>

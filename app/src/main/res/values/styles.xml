@@ -169,5 +169,8 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-
+    <style name="Snackbar" parent="Widget.MaterialComponents.Snackbar">
+        <item name="android:background">@color/text_black</item>
+        <item name="android:textColor">@color/text_white</item>
+    </style>
 </resources>

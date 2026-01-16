@@ -3,9 +3,14 @@ package com.example.playlistmaker.di
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.playlistmaker.createplaylist.data.CreatePlaylistRepositoryImpl
+import com.example.playlistmaker.createplaylist.data.PlaylistDbConverter
+import com.example.playlistmaker.createplaylist.domain.CreatePlaylistRepository
 import com.example.playlistmaker.db.AppDatabase
-import com.example.playlistmaker.db.TrackDbConverter
 import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
+import com.example.playlistmaker.library.data.TrackDbConverter
 import com.example.playlistmaker.library.domain.FavoritesRepository
 import com.example.playlistmaker.player.data.PlayerMediaPlayer
 import com.example.playlistmaker.player.domain.PlayerRepository
@@ -75,8 +80,35 @@ val dataModule = module {
         HistoryRepositoryImpl(get(), get(), get())
     }
 
+    val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+        }
+    }
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL(
+                """
+        CREATE TABLE IF NOT EXISTS
+        `track_in_playlist` (
+           `id` TEXT NOT NULL, 
+           `title` TEXT NOT NULL,`artist` TEXT NOT NULL, 
+           `duration` TEXT NOT NULL, 
+           `album` TEXT, 
+           `releaseYear` INTEGER NOT NULL, 
+           `genre` TEXT NOT NULL, 
+           `country` TEXT NOT NULL, 
+           `coverUrl` TEXT NOT NULL, 
+           `fileUrl` TEXT NOT NULL, 
+            PRIMARY KEY(`id`)
+        )
+                    """
+            )
+        }
+    }
+
     single {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "favorites.db")
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "playlist_maker.db")
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
     }
 
@@ -84,9 +116,29 @@ val dataModule = module {
         get<AppDatabase>().favoritesDao()
     }
 
-    factory { TrackDbConverter() }
+    single { TrackDbConverter() }
 
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())
     }
+
+    single {
+        get<AppDatabase>().playlistDao()
+    }
+
+    single { PlaylistDbConverter(get()) }
+
+    single<CreatePlaylistRepository> {
+        CreatePlaylistRepositoryImpl(
+            get(),
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
+    single {
+        get<AppDatabase>().trackInPlaylistDao()
+    }
+
 }
