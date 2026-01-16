@@ -88,7 +88,7 @@ class PlayerFragment : Fragment() {
         val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
         savedStateHandle?.getLiveData<String>("new_playlist_name")
             ?.observe(viewLifecycleOwner) { playlistName ->
-                if (playlistName != null) {
+                playlistName?.let {
                     viewModel.onPlaylistCreated(playlistName)
                     savedStateHandle.remove<String>("new_playlist_name")
                 }

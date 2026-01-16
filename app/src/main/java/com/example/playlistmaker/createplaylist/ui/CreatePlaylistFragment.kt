@@ -12,6 +12,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -101,48 +103,11 @@ class CreatePlaylistFragment : Fragment() {
             requestPermission()
         }
 
-        binding.playlistName.setOnFocusChangeListener { view, hasFocus ->
-            val text = binding.playlistName.text
-            val colorId =
-                if (hasFocus && !text.isNullOrEmpty()) R.color.YP_blue else R.color.YP_text_gray
-            val colorInt = ContextCompat.getColor(requireContext(), colorId)
-            binding.clueName.setTextColor(colorInt)
+        setupTextField(binding.playlistName, binding.clueName) { text ->
+            setCreateButtonState(text.isNotEmpty())
         }
 
-        binding.playlistDescription.setOnFocusChangeListener { view, hasFocus ->
-            val text = binding.playlistDescription.text
-            val colorId =
-                if (hasFocus && !text.isNullOrEmpty()) R.color.YP_blue else R.color.YP_text_gray
-            val colorInt = ContextCompat.getColor(requireContext(), colorId)
-            binding.clueDescription.setTextColor(colorInt)
-        }
-
-
-        binding.playlistName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                setCreateButtonState(!s.isNullOrEmpty())
-                binding.clueName.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-                val colorInt = ContextCompat.getColor(requireContext(), R.color.YP_blue)
-                binding.clueName.setTextColor(colorInt)
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        binding.playlistDescription.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clueDescription.visibility =
-                    if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
-                val colorInt = ContextCompat.getColor(requireContext(), R.color.YP_blue)
-                binding.clueDescription.setTextColor(colorInt)
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        setupTextField(binding.playlistDescription, binding.clueDescription)
 
         binding.createButton.setOnClickListener {
             viewModel.createPlaylist(
@@ -168,10 +133,10 @@ class CreatePlaylistFragment : Fragment() {
         }
 
         viewModel.playlistCreated.observe(viewLifecycleOwner) { playlistName ->
-            if (playlistName != null) {
+            playlistName?.let { name ->
                 findNavController().previousBackStackEntry?.savedStateHandle?.set(
                     "new_playlist_name",
-                    playlistName
+                    name
                 )
                 findNavController().navigateUp()
             }
@@ -236,6 +201,31 @@ class CreatePlaylistFragment : Fragment() {
         } catch (e: ActivityNotFoundException) {
             getContent.launch("image/*")
         }
+    }
+    private fun setupTextField(
+        editText: EditText,
+        clueView: TextView,
+        onTextChangedAction: ((String) -> Unit)? = null
+    ) {
+        editText.setOnFocusChangeListener { _, hasFocus ->
+            val text = editText.text
+            val colorId =
+                if (hasFocus && !text.isNullOrEmpty()) R.color.YP_blue else R.color.YP_text_gray
+            val colorInt = ContextCompat.getColor(requireContext(), colorId)
+            clueView.setTextColor(colorInt)
+        }
+
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val text = s?.toString().orEmpty()
+                clueView.visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
+                clueView.setTextColor(ContextCompat.getColor(requireContext(), R.color.YP_blue))
+                onTextChangedAction?.invoke(text)
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     override fun onDestroy() {

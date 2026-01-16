@@ -6,11 +6,11 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.playlistmaker.createplaylist.data.CreatePlaylistRepositoryImpl
+import com.example.playlistmaker.createplaylist.data.PlaylistDbConverter
 import com.example.playlistmaker.createplaylist.domain.CreatePlaylistRepository
 import com.example.playlistmaker.db.AppDatabase
-import com.example.playlistmaker.db.PlaylistDbConverter
-import com.example.playlistmaker.db.TrackDbConverter
 import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
+import com.example.playlistmaker.library.data.TrackDbConverter
 import com.example.playlistmaker.library.domain.FavoritesRepository
 import com.example.playlistmaker.player.data.PlayerMediaPlayer
 import com.example.playlistmaker.player.domain.PlayerRepository

@@ -5,10 +5,8 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.example.playlistmaker.createplaylist.domain.CreatePlaylistRepository
 import com.example.playlistmaker.createplaylist.domain.Playlist
-import com.example.playlistmaker.db.PlaylistDao
-import com.example.playlistmaker.db.PlaylistDbConverter
-import com.example.playlistmaker.db.TrackDbConverter
-import com.example.playlistmaker.db.TrackIntPlaylistDao
+import com.example.playlistmaker.library.data.TrackDbConverter
+import com.example.playlistmaker.player.data.TrackIntPlaylistDao
 import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

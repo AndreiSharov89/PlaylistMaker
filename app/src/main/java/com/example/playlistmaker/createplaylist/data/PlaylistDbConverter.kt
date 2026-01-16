@@ -1,4 +1,4 @@
-package com.example.playlistmaker.db
+package com.example.playlistmaker.createplaylist.data
 
 import com.example.playlistmaker.createplaylist.domain.Playlist
 import com.google.gson.Gson

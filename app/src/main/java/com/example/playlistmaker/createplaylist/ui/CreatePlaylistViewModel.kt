@@ -16,8 +16,8 @@ class CreatePlaylistViewModel(
     private val _selectedCoverUri = MutableLiveData<Uri?>()
     val selectedCoverUri: LiveData<Uri?> get() = _selectedCoverUri
 
-    private val _playlistCreated = MutableLiveData<String>()
-    val playlistCreated: LiveData<String> get() = _playlistCreated
+    private val _playlistCreated = MutableLiveData<String?>()
+    val playlistCreated: LiveData<String?> get() = _playlistCreated
     private var savedCoverPath: String? = null
     private var saveImageJob: Job? = null
 
@@ -29,7 +29,7 @@ class CreatePlaylistViewModel(
         }
     }
 
-    fun createPlaylist(name: String, description: String, coverImageUri: Uri? = null) {
+    fun createPlaylist(name: String, description: String) {
         if (name.isBlank()) return
         viewModelScope.launch {
             try {
@@ -37,7 +37,7 @@ class CreatePlaylistViewModel(
                 createPlaylistInteractor.createPlaylist(name, description, savedCoverPath ?: "")
                 _playlistCreated.postValue(name)
             } catch (e: Exception) {
-                _playlistCreated.postValue("")
+                _playlistCreated.postValue(null)
             }
         }
     }

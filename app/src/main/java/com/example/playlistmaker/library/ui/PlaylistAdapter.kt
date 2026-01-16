@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.createplaylist.domain.Playlist
 import com.example.playlistmaker.databinding.PlaylistViewBinding
+import com.example.playlistmaker.utils.formatTrackCount
 
 class PlaylistAdapter(
     private val clickListener: (Playlist) -> Unit
@@ -36,16 +37,7 @@ class PlaylistAdapter(
 
         fun bind(playlist: Playlist) {
             binding.playlistName.text = playlist.name
-            val count = playlist.trackCount
-            val lastDigit = count % 10
-            val lastTwoDigits = count % 100
-
-            val tracksString = when {
-                lastDigit == 1 && lastTwoDigits != 11 -> "$count трек"
-                lastDigit in 2..4 && lastTwoDigits !in 12..14 -> "$count трека"
-                else -> "$count треков"
-            }
-            binding.trackCount.text = tracksString
+            binding.trackCount.text = formatTrackCount(playlist.trackCount)
 
             Glide.with(itemView)
                 .load(playlist.coverImagePath)
