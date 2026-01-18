@@ -41,8 +41,7 @@ val viewModelModule = module {
 
     viewModel { (playlistId: Long) ->
         PlaylistViewModel(
-            playlistId = playlistId,
-            createPlaylistInteractor = get()
+            playlistId = playlistId, get()
         )
     }
 

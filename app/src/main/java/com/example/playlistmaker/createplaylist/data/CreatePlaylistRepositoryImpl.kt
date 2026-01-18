@@ -101,4 +101,8 @@ class CreatePlaylistRepositoryImpl(
     override suspend fun deleteTrack(trackId: String) {
         return trackInPlaylistDao.deleteTrack(trackId)
     }
+
+    override suspend fun deletePlaylist(playlistId: Long) {
+        return playlistDao.deletePlaylist(playlistId)
+    }
 }

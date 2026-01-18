@@ -29,4 +29,5 @@
     <dimen name="dp_60">60dp</dimen>
     <dimen name="dp_61">61dp</dimen>
     <dimen name="dp_120">120dp</dimen>
+    <dimen name="bottom_sheet_peek_height">266dp</dimen>
 </resources>

@@ -32,29 +32,63 @@ class PlaylistsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupRecycler()
+        setupClicks()
+        observeState()
+        observeNavigationResults()
+    }
+
+    private fun setupRecycler() {
         playlistAdapter = PlaylistAdapter { playlist ->
             val action = LibraryFragmentDirections
                 .actionLibraryFragmentToPlaylistFragment(playlist.id!!)
-            view.post { parentFragment?.findNavController()?.navigate(action) }
+            requireParentFragment()
+                .findNavController()
+                .navigate(action)
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = playlistAdapter
+    }
 
+    private fun setupClicks() {
         binding.btnCreatePlaylist.setOnClickListener {
-            findNavController().navigate(R.id.action_libraryFragment_to_createPlaylistFragment)
+            findNavController()
+                .navigate(R.id.action_libraryFragment_to_createPlaylistFragment)
+        }
+    }
+
+    private fun observeState() {
+        viewModel.state.observe(viewLifecycleOwner, ::render)
+    }
+
+    private fun observeNavigationResults() {
+        observeNavigationResult(
+            NavigationKeys.NEW_PLAYLIST_NAME
+        ) { name ->
+            showPlaylistSnackbar(R.string.playlist_created_message, name)
         }
 
-        viewModel.state.observe(viewLifecycleOwner) {
-            render(it)
+        observeNavigationResult(
+            NavigationKeys.DELETED_PLAYLIST_NAME
+        ) { name ->
+            showPlaylistSnackbar(R.string.playlist_deleted_message, name)
         }
+    }
 
-        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
-        savedStateHandle?.getLiveData<String>("new_playlist_name")
-            ?.observe(viewLifecycleOwner) { playlistName ->
-                playlistName?.let { name ->
-                    showPlaylistCreatedSnackbar(name)
-                    savedStateHandle.remove<String>("new_playlist_name")
+    private fun observeNavigationResult(
+        key: String,
+        onResult: (String) -> Unit
+    ) {
+        val backStackEntry = findNavController()
+            .getBackStackEntry(R.id.libraryFragment)
+
+        backStackEntry.savedStateHandle
+            .getLiveData<String>(key)
+            .observe(viewLifecycleOwner) { result ->
+                result?.let {
+                    onResult(it)
+                    backStackEntry.savedStateHandle.remove<String>(key)
                 }
             }
     }
@@ -87,16 +121,25 @@ class PlaylistsFragment : Fragment() {
         }
     }
 
-    private fun showPlaylistCreatedSnackbar(playlistName: String) {
-        val message = getString(R.string.playlist_created_message, playlistName)
-        val bottomNav = requireActivity().findViewById<View>(R.id.bottomNavigationView)
-        val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
-            .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.text_black))
-            .setTextColor(ContextCompat.getColor(requireContext(), R.color.text_white))
-        if (bottomNav != null) {
-            snackbar.anchorView = bottomNav
-        }
-        snackbar.show()
+    private fun showPlaylistSnackbar(
+        messageRes: Int,
+        playlistName: String
+    ) {
+        val message = getString(messageRes, playlistName)
+        val bottomNav =
+            requireActivity().findViewById<View>(R.id.bottomNavigationView)
+
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .setBackgroundTint(
+                ContextCompat.getColor(requireContext(), R.color.text_black)
+            )
+            .setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.text_white)
+            )
+            .apply {
+                bottomNav?.let { anchorView = it }
+            }
+            .show()
     }
 
     override fun onDestroyView() {
@@ -107,5 +150,10 @@ class PlaylistsFragment : Fragment() {
 
     companion object {
         fun newInstance() = PlaylistsFragment()
+    }
+
+    private object NavigationKeys {
+        const val NEW_PLAYLIST_NAME = "new_playlist_name"
+        const val DELETED_PLAYLIST_NAME = "deleted_playlist_name"
     }
 }

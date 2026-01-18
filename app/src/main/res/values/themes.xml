@@ -8,14 +8,24 @@
         <item name="colorOnPrimary">@color/YP_black</item>
         <item name="colorOnSecondary">@color/gray</item>
         <item name="snackbarStyle">@style/Snackbar</item>
+        <item name="materialAlertDialogTheme">@style/App.MaterialAlertDialogTheme</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 
     <style name="App.MaterialAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/YP_black</item>
+        <item name="colorPrimary">@color/YP_blue</item>
         <item name="buttonBarPositiveButtonStyle">@style/App.DialogButton</item>
         <item name="buttonBarNegativeButtonStyle">@style/App.DialogButton</item>
         <item name="buttonBarNeutralButtonStyle">@style/App.DialogButton</item>
+    </style>
+
+    <style name="App.DialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="color">@color/YP_blue</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:textSize">@dimen/sp_14</item>
     </style>
 
     <style name="TextRegular12">

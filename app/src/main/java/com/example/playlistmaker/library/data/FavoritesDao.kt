@@ -20,4 +20,7 @@ interface FavoritesDao {
 
     @Query("SELECT id FROM favorites")
     suspend fun getAllTracksId(): List<String>
+
+    @Query("SELECT EXISTS(SELECT * FROM favorites WHERE id = :id)")
+    suspend fun isFavorite(id: String): Boolean
 }

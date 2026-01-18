@@ -22,7 +22,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
-import kotlin.math.max
 
 class PlayerFragment : Fragment() {
     private var _binding: FragmentPlayerBinding? = null
@@ -68,6 +67,9 @@ class PlayerFragment : Fragment() {
         binding.btnLike.setOnClickListener {
             viewModel.onFavoriteClicked()
         }
+
+        viewModel.initFavoriteState()
+        viewModel.checkIsFavorite()
         viewModel.preparePlayer()
 
         viewModel.observeSnackbarMessage().observe(viewLifecycleOwner) { message ->
@@ -124,7 +126,10 @@ class PlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.overlay.alpha = max(0f, slideOffset)
+                binding.overlay.apply {
+                    alpha = slideOffset.coerceIn(0f, 1f)
+                    isVisible = slideOffset > 0f
+                }
             }
         })
 
@@ -205,7 +210,6 @@ class PlayerFragment : Fragment() {
             text = track.country
             isVisible = !text.isNullOrEmpty()
         }
-        renderFavoriteButton(track.isFavorite)
     }
 
     private fun loadCoverImage() {

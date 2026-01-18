@@ -8,7 +8,10 @@ import com.example.playlistmaker.createplaylist.domain.CreatePlaylistInteractor
 import com.example.playlistmaker.createplaylist.domain.Playlist
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.utils.formatMinuteCount
+import com.example.playlistmaker.utils.formatTrackCount
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class PlaylistViewModel(
     private val playlistId: Long,
@@ -20,6 +23,15 @@ class PlaylistViewModel(
 
     private val _tracks = MutableLiveData<List<Track>>()
     val tracks: LiveData<List<Track>> get() = _tracks
+
+    private val _sharePlaylistEvent = MutableLiveData<String?>()
+    val sharePlaylistEvent: LiveData<String?> get() = _sharePlaylistEvent
+
+    private val _toastEvent = MutableLiveData<String?>()
+    val toastEvent: LiveData<String?> get() = _toastEvent
+
+    private val _playlistDeleted = MutableLiveData<Boolean>()
+    val playlistDeleted: LiveData<Boolean> get() = _playlistDeleted
 
     fun loadPlaylist() {
         viewModelScope.launch {
@@ -38,6 +50,46 @@ class PlaylistViewModel(
             createPlaylistInteractor.deleteTrackFromPlaylist(trackId, playlistId)
             loadPlaylist()
         }
+    }
+    fun removePlaylist() {
+        viewModelScope.launch {
+            createPlaylistInteractor.deletePlaylist(playlistId)
+            _playlistDeleted.postValue(true)
+        }
+    }
+
+    fun onShareButtonClicked() {
+        val playlist = _playlistData.value?.first ?: return
+        val tracks = _tracks.value ?: return
+        if (tracks.isEmpty()) {
+            _toastEvent.postValue("В этом плейлисте нет списка треков, которым можно поделиться")
+            return
+        }
+        val shareText = buildShareText(playlist, tracks)
+        _sharePlaylistEvent.postValue(shareText)
+    }
+
+    fun onShareEventHandled() {
+        _sharePlaylistEvent.value = null
+    }
+
+    fun onToastEventHandled() {
+        _toastEvent.value = null
+    }
+
+    private fun buildShareText(playlist: Playlist, tracks: List<Track>): String {
+        val builder = StringBuilder()
+        builder.append(playlist.name).appendLine()
+        builder.append(playlist.description).appendLine()
+        builder.append(formatTrackCount(playlist.trackCount)).appendLine()
+
+        tracks.forEachIndexed { index, track ->
+            val trackDuration =
+                SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
+            builder.append("${index + 1}. ${track.artistName} - ${track.trackName} ($trackDuration)")
+                .appendLine()
+        }
+        return builder.toString()
     }
 
     private suspend fun getFormattedDuration(trackIds: List<String>): String {

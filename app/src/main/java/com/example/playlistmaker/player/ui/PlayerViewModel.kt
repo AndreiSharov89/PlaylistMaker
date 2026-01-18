@@ -37,6 +37,8 @@ class PlayerViewModel(
         if (uiStateLiveData.value is PlayerUiState.Content) {
             return
         }
+        val previousFavorite =
+            (uiStateLiveData.value as? PlayerUiState.Content)?.isFavorite ?: track.isFavorite
         val currentIsFavorite =
             (uiStateLiveData.value as? PlayerUiState.Content)?.isFavorite ?: track.isFavorite
         player.preparePlayer(
@@ -46,7 +48,7 @@ class PlayerViewModel(
                     PlayerUiState.Content(
                         isPlaying = false,
                         progressText = "00:00",
-                        isFavorite = currentIsFavorite
+                        isFavorite = previousFavorite
                     )
                 )
             },
@@ -179,6 +181,26 @@ class PlayerViewModel(
                 playlistsLiveData.postValue(it)
             }
         }
+    }
+
+    fun checkIsFavorite() {
+        viewModelScope.launch {
+            val isFavorite = favoritesInteractor.isFavorite(track.trackId.toString())
+            track.isFavorite = isFavorite
+
+            val state = uiStateLiveData.value
+            if (state is PlayerUiState.Content) {
+                uiStateLiveData.postValue(state.copy(isFavorite = isFavorite))
+            }
+        }
+    }
+
+    fun initFavoriteState() {
+        uiStateLiveData.value = PlayerUiState.Content(
+            isPlaying = false,
+            progressText = "00:00",
+            isFavorite = track.isFavorite
+        )
     }
 
     companion object {

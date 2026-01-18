@@ -43,12 +43,19 @@
     <string name="dialog_close">Завершить</string>
     <string name="storage_permission_rationale">Доступ к файлам необходим для выбора обложки альбома.</string>
     <string name="delete_track_dialog_title">Хотите удалить трек?</string>
-    <string name="delete_track_dialog_no">Нет</string>
-    <string name="delete_track_dialog_yes">Да</string>
+    <string name="delete_track_dialog_no">НЕТ</string>
+    <string name="delete_track_dialog_yes">ДА</string>
+    <string name="share_playlist_title">Поделиться плейлистом</string>
+    <string name="share_playlist">Поделиться</string>
+    <string name="edit_playlist">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="no_apps">Приложение не выбрано</string>
+    <string name="delete_playlist_dialog_title">Хотите удалить плейлист \"%1$s\"?</string>
+    <string name="playlist_deleted_message">Плейлист "%1$s" удалён</string>
 
     <plurals name="track_count">
         <item quantity="one">%d трек</item>
-        <item quantity="few">%d трека</item>  <!--a few part doesnt work if locale isnt RU-->
+        <item quantity="few">%d трека</item>
         <item quantity="many">%d треков</item>
         <item quantity="other">%d треков</item>
     </plurals>

@@ -20,4 +20,6 @@ interface CreatePlaylistRepository {
     suspend fun saveImage(uri: Uri, fileName: String): Uri
 
     suspend fun deleteTrack(trackId: String)
+
+    suspend fun deletePlaylist(playlistId: Long)
 }
