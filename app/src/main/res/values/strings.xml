@@ -42,6 +42,9 @@
     <string name="dialog_cancel">Отмена</string>
     <string name="dialog_close">Завершить</string>
     <string name="storage_permission_rationale">Доступ к файлам необходим для выбора обложки альбома.</string>
+    <string name="delete_track_dialog_title">Хотите удалить трек?</string>
+    <string name="delete_track_dialog_no">Нет</string>
+    <string name="delete_track_dialog_yes">Да</string>
 
     <plurals name="track_count">
         <item quantity="one">%d трек</item>

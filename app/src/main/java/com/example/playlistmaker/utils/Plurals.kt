@@ -10,3 +10,14 @@ fun formatTrackCount(count: Int): String {
         else -> "$count треков"
     }
 }
+
+fun formatMinuteCount(count: Int): String {
+    val lastDigit = count % 10
+    val lastTwoDigits = count % 100
+
+    return when {
+        lastDigit == 1 && lastTwoDigits != 11 -> "$count минута"
+        lastDigit in 2..4 && lastTwoDigits !in 12..14 -> "$count минуты"
+        else -> "$count минут"
+    }
+}

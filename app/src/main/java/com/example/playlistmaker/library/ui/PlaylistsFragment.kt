@@ -33,7 +33,9 @@ class PlaylistsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         playlistAdapter = PlaylistAdapter { playlist ->
-            // TODO: Handle playlist click
+            val action = LibraryFragmentDirections
+                .actionLibraryFragmentToPlaylistFragment(playlist.id!!)
+            view.post { parentFragment?.findNavController()?.navigate(action) }
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -88,24 +90,13 @@ class PlaylistsFragment : Fragment() {
     private fun showPlaylistCreatedSnackbar(playlistName: String) {
         val message = getString(R.string.playlist_created_message, playlistName)
         val bottomNav = requireActivity().findViewById<View>(R.id.bottomNavigationView)
-        if (bottomNav == null) {
-            Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
-                .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.text_black))
-                .setTextColor(ContextCompat.getColor(requireContext(), R.color.text_white))
-                .show()
-            return
-        }
-        bottomNav.isVisible = false
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
-            .addCallback(object : Snackbar.Callback() {
-                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    super.onDismissed(transientBottomBar, event)
-                    bottomNav.isVisible = true
-                }
-            })
+        val snackbar = Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
             .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.text_black))
             .setTextColor(ContextCompat.getColor(requireContext(), R.color.text_white))
-            .show()
+        if (bottomNav != null) {
+            snackbar.anchorView = bottomNav
+        }
+        snackbar.show()
     }
 
     override fun onDestroyView() {

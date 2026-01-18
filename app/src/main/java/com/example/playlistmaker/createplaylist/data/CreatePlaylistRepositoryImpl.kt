@@ -35,6 +35,12 @@ class CreatePlaylistRepositoryImpl(
         }
     }
 
+    override suspend fun getAllPlaylistsNonFlow(): List<Playlist> {
+        return playlistDao.getAllPlaylistsNotFlow()
+            .map { playlistEntity -> playlistDbConverter.map(playlistEntity) }
+    }
+
+
     override suspend fun addTrackToPlaylist(track: Track) {
         val trackEntity = trackDbConverter.mapToPlaylistTrack(track)
         trackInPlaylistDao.insertTrackToPlaylist(trackEntity)
@@ -51,6 +57,12 @@ class CreatePlaylistRepositoryImpl(
                 trackDbConverter.mapFromPlaylistTrack(entity)
             }
         }
+    }
+
+    override suspend fun getPlaylistById(id: Long): Playlist {
+        val playlistEntity = playlistDao.getPlaylistById(id)
+        return playlistEntity?.let { playlistDbConverter.map(it) }
+            ?: throw Exception("Playlist not found")
     }
 
     override suspend fun addTrackAndUpdatePlaylist(track: Track, playlist: Playlist) {
@@ -84,5 +96,9 @@ class CreatePlaylistRepositoryImpl(
         }
 
         return file.toUri()
+    }
+
+    override suspend fun deleteTrack(trackId: String) {
+        return trackInPlaylistDao.deleteTrack(trackId)
     }
 }
