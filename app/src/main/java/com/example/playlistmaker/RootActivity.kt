@@ -46,6 +46,9 @@ class RootActivity : AppCompatActivity() {
                 R.id.playlistFragment -> {
                     binding.bottomNavigationView.isVisible = false
                 }
+                R.id.editPlaylistFragment -> {
+                    binding.bottomNavigationView.isVisible = false
+                }
 
                 else -> {
                     binding.bottomNavigationView.isVisible = true

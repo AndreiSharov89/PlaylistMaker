@@ -52,6 +52,10 @@
     <string name="no_apps">Приложение не выбрано</string>
     <string name="delete_playlist_dialog_title">Хотите удалить плейлист \"%1$s\"?</string>
     <string name="playlist_deleted_message">Плейлист "%1$s" удалён</string>
+    <string name="save_button_text">Сохранить</string>
+    <string name="edit_playlist_tittle">Изменить %1$s</string>
+    <string name="empty_playlist">Плейлист \nпуст</string>
+
 
     <plurals name="track_count">
         <item quantity="one">%d трек</item>

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -74,14 +75,20 @@ class PlaylistFragment : Fragment() {
             }
         }
 
-        view.post {
-            val shareButtonBottomY = binding.shareButton.bottom
-            val screenHeight = binding.root.height
-            val availableSpacePx = screenHeight - shareButtonBottomY
-            val defaultPeekHeightPx =
-                resources.getDimensionPixelSize(R.dimen.bottom_sheet_peek_height)
-            tracksSheetBehavior.peekHeight = min(availableSpacePx, defaultPeekHeightPx)
+        binding.actionEdit.setOnClickListener {
+            val action =
+                PlaylistFragmentDirections.actionPlaylistFragmentToEditPlaylistFragment(args.playlistId)
+            findNavController().navigate(action)
         }
+
+        binding.tracksSheet.doOnLayout {
+            val availableHeight = binding.root.height - binding.shareButton.bottom
+            tracksSheetBehavior.peekHeight = min(
+                resources.getDimensionPixelSize(R.dimen.bottom_sheet_peek_height),
+                availableHeight
+            )
+        }
+
     }
 
     private fun setupTrackAdapter() {
@@ -138,11 +145,12 @@ class PlaylistFragment : Fragment() {
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         binding.overlay.isVisible = false
+                        tracksSheetBehavior.isDraggable = true
                     }
 
                     else -> {
                         binding.overlay.alpha = 0.5f
-                        binding.overlay.isVisible = true
+                        tracksSheetBehavior.isDraggable = false
 
                     }
                 }
@@ -188,9 +196,18 @@ class PlaylistFragment : Fragment() {
         }
 
         viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
-            trackAdapter.tracks = ArrayList(tracks)
+            trackAdapter.tracks = ArrayList(tracks.asReversed())
             trackAdapter.notifyDataSetChanged()
             binding.tracksRecyclerView.isVisible = tracks.isNotEmpty()
+            if (tracks.isEmpty()) {
+                tracksSheetBehavior.isDraggable = false
+                binding.tracksSheet.isVisible = false
+                binding.playlistEmpty.isVisible = true
+            } else {
+                tracksSheetBehavior.isDraggable = true
+                binding.tracksSheet.isVisible = true
+                binding.playlistEmpty.isVisible = false
+            }
         }
         viewModel.sharePlaylistEvent.observe(viewLifecycleOwner) { shareText ->
             if (shareText != null) {
@@ -229,6 +246,7 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun showPlaylistDeletionDialog(playlist: Playlist) {
+        menuSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         MaterialAlertDialogBuilder(requireContext(), R.style.App_MaterialAlertDialogTheme)
             .setTitle(getString(R.string.delete_playlist_dialog_title, playlist.name))
             .setNegativeButton(R.string.delete_track_dialog_no) { _, _ ->

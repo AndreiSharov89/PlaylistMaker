@@ -35,10 +35,10 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class CreatePlaylistFragment : Fragment() {
+open class CreatePlaylistFragment : Fragment() {
     private var _binding: FragmentCreatePlaylistBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel: CreatePlaylistViewModel by viewModel()
+    protected val binding get() = _binding!!
+    open val viewModel: CreatePlaylistViewModel by viewModel()
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
@@ -159,7 +159,7 @@ class CreatePlaylistFragment : Fragment() {
             .show()
     }
 
-    private fun requestPermission() {
+    protected fun requestPermission() {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             Manifest.permission.READ_MEDIA_IMAGES
         } else {
