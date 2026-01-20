@@ -21,4 +21,6 @@
     <color name="border_light_grey">#E6E8EB</color>
     <color name="clue_gray">#FFFFFF</color>
     <color name="bottom_sheet_rectangle">#FFFFFF</color>
+    <color name="YP_light_gray">#E6E8EB</color>
+    <color name="YP_background_overlay">#99000000</color>
 </resources>

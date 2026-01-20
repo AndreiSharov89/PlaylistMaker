@@ -9,19 +9,19 @@ import com.example.playlistmaker.createplaylist.domain.CreatePlaylistInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class CreatePlaylistViewModel(
+open class CreatePlaylistViewModel(
     private val createPlaylistInteractor: CreatePlaylistInteractor
 ) : ViewModel() {
 
-    private val _selectedCoverUri = MutableLiveData<Uri?>()
-    val selectedCoverUri: LiveData<Uri?> get() = _selectedCoverUri
+    protected open var _selectedCoverUri = MutableLiveData<Uri?>()
+    open val selectedCoverUri: LiveData<Uri?> get() = _selectedCoverUri
 
-    private val _playlistCreated = MutableLiveData<String?>()
+    protected val _playlistCreated = MutableLiveData<String?>()
     val playlistCreated: LiveData<String?> get() = _playlistCreated
-    private var savedCoverPath: String? = null
+    var savedCoverPath: String? = null
     private var saveImageJob: Job? = null
 
-    fun onImageSelected(uri: Uri) {
+    open fun onImageSelected(uri: Uri) {
         _selectedCoverUri.value = uri
         saveImageJob?.cancel()
         saveImageJob = viewModelScope.launch {
@@ -29,7 +29,7 @@ class CreatePlaylistViewModel(
         }
     }
 
-    fun createPlaylist(name: String, description: String) {
+    open fun createPlaylist(name: String, description: String) {
         if (name.isBlank()) return
         viewModelScope.launch {
             try {

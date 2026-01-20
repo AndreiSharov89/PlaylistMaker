@@ -23,4 +23,8 @@ class FavoritesRepositoryImpl(
             entities.map { trackDbConverter.map(it) }
         }
     }
+
+    override suspend fun isFavorite(id: String): Boolean {
+        return favoritesDao.isFavorite(id)
+    }
 }

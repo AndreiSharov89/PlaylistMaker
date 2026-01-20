@@ -10,13 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentPlaylistBinding
+import com.example.playlistmaker.databinding.FragmentPlaylistListBinding
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
 
-    private var _binding: FragmentPlaylistBinding? = null
+    private var _binding: FragmentPlaylistListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: PlaylistsViewModel by viewModel()
     private var playlistAdapter: PlaylistAdapter? = null
@@ -25,34 +25,70 @@ class PlaylistsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupRecycler()
+        setupClicks()
+        observeState()
+        observeNavigationResults()
+    }
+
+    private fun setupRecycler() {
         playlistAdapter = PlaylistAdapter { playlist ->
-            // TODO: Handle playlist click
+            val action = LibraryFragmentDirections
+                .actionLibraryFragmentToPlaylistFragment(playlist.id!!)
+            requireParentFragment()
+                .findNavController()
+                .navigate(action)
         }
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = playlistAdapter
+    }
 
+    private fun setupClicks() {
         binding.btnCreatePlaylist.setOnClickListener {
-            findNavController().navigate(R.id.action_libraryFragment_to_createPlaylistFragment)
+            findNavController()
+                .navigate(R.id.action_libraryFragment_to_createPlaylistFragment)
+        }
+    }
+
+    private fun observeState() {
+        viewModel.state.observe(viewLifecycleOwner, ::render)
+    }
+
+    private fun observeNavigationResults() {
+        observeNavigationResult(
+            NavigationKeys.NEW_PLAYLIST_NAME
+        ) { name ->
+            showPlaylistSnackbar(R.string.playlist_created_message, name)
         }
 
-        viewModel.state.observe(viewLifecycleOwner) {
-            render(it)
+        observeNavigationResult(
+            NavigationKeys.DELETED_PLAYLIST_NAME
+        ) { name ->
+            showPlaylistSnackbar(R.string.playlist_deleted_message, name)
         }
+    }
 
-        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
-        savedStateHandle?.getLiveData<String>("new_playlist_name")
-            ?.observe(viewLifecycleOwner) { playlistName ->
-                playlistName?.let { name ->
-                    showPlaylistCreatedSnackbar(name)
-                    savedStateHandle.remove<String>("new_playlist_name")
+    private fun observeNavigationResult(
+        key: String,
+        onResult: (String) -> Unit
+    ) {
+        val backStackEntry = findNavController()
+            .getBackStackEntry(R.id.libraryFragment)
+
+        backStackEntry.savedStateHandle
+            .getLiveData<String>(key)
+            .observe(viewLifecycleOwner) { result ->
+                result?.let {
+                    onResult(it)
+                    backStackEntry.savedStateHandle.remove<String>(key)
                 }
             }
     }
@@ -85,26 +121,24 @@ class PlaylistsFragment : Fragment() {
         }
     }
 
-    private fun showPlaylistCreatedSnackbar(playlistName: String) {
-        val message = getString(R.string.playlist_created_message, playlistName)
-        val bottomNav = requireActivity().findViewById<View>(R.id.bottomNavigationView)
-        if (bottomNav == null) {
-            Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
-                .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.text_black))
-                .setTextColor(ContextCompat.getColor(requireContext(), R.color.text_white))
-                .show()
-            return
-        }
-        bottomNav.isVisible = false
+    private fun showPlaylistSnackbar(
+        messageRes: Int,
+        playlistName: String
+    ) {
+        val message = getString(messageRes, playlistName)
+        val bottomNav =
+            requireActivity().findViewById<View>(R.id.bottomNavigationView)
+
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
-            .addCallback(object : Snackbar.Callback() {
-                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    super.onDismissed(transientBottomBar, event)
-                    bottomNav.isVisible = true
-                }
-            })
-            .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.text_black))
-            .setTextColor(ContextCompat.getColor(requireContext(), R.color.text_white))
+            .setBackgroundTint(
+                ContextCompat.getColor(requireContext(), R.color.text_black)
+            )
+            .setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.text_white)
+            )
+            .apply {
+                bottomNav?.let { anchorView = it }
+            }
             .show()
     }
 
@@ -116,5 +150,10 @@ class PlaylistsFragment : Fragment() {
 
     companion object {
         fun newInstance() = PlaylistsFragment()
+    }
+
+    private object NavigationKeys {
+        const val NEW_PLAYLIST_NAME = "new_playlist_name"
+        const val DELETED_PLAYLIST_NAME = "deleted_playlist_name"
     }
 }

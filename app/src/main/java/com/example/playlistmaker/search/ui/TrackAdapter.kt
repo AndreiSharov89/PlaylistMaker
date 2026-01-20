@@ -5,7 +5,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.search.domain.Track
 
 class TrackAdapter(
-    private val clickListener: TrackClickListener
+    private val clickListener: TrackClickListener,
+    private val onTrackLongClick: ((Track) -> Unit)? = null
 ) : RecyclerView.Adapter<TrackViewHolder>() {
     var tracks = ArrayList<Track>()
 
@@ -17,6 +18,12 @@ class TrackAdapter(
         holder.bind(track)
         holder.itemView.setOnClickListener {
                 clickListener.onTrackClick(track)
+        }
+        onTrackLongClick?.let { longClickListener ->
+            holder.itemView.setOnLongClickListener {
+                longClickListener(track)
+                true
+            }
         }
     }
 

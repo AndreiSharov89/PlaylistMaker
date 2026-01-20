@@ -18,9 +18,9 @@ class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
     private val viewModel: FavoritesViewModel by viewModel()
-    private val trackAdapter = TrackAdapter { track ->
+    private val trackAdapter = TrackAdapter(clickListener = { track ->
         openPlayer(track)
-    }
+    })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

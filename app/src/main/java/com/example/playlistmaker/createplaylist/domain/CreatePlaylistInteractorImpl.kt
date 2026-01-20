@@ -32,6 +32,23 @@ class CreatePlaylistInteractorImpl(
     override suspend fun addTrackToPlaylist(track: Track) {
         playlistRepository.addTrackToPlaylist(track)
     }
+    override suspend fun deleteTrackFromPlaylist(trackId: String, playlistId: Long) {
+        val playlist = playlistRepository.getPlaylistById(playlistId)
+        val updatedTrackIds = playlist.trackIds.toMutableList()
+        if (!updatedTrackIds.remove(trackId)) {
+            return
+        }
+        val updatedPlaylist = playlist.copy(
+            trackIds = updatedTrackIds,
+            trackCount = updatedTrackIds.size
+        )
+        playlistRepository.updatePlaylist(updatedPlaylist)
+        val allPlaylists = playlistRepository.getAllPlaylistsNonFlow()
+        val isOrphaned = allPlaylists.none { p -> p.trackIds.contains(trackId) }
+        if (isOrphaned) {
+            playlistRepository.deleteTrack(trackId)
+        }
+    }
 
     override suspend fun getTrackById(id: String): Track? {
         return playlistRepository.getTrackById(id)
@@ -39,6 +56,14 @@ class CreatePlaylistInteractorImpl(
 
     override fun getAllTracks(): Flow<List<Track>> {
         return playlistRepository.getAllTracks()
+    }
+
+    override suspend fun getPlaylistById(id: Long): Playlist {
+        return playlistRepository.getPlaylistById(id)
+    }
+
+    override suspend fun deletePlaylist(playlistId: Long) {
+        playlistRepository.deletePlaylist(playlistId)
     }
 
     override suspend fun addTracksAndUpdatePlaylist(

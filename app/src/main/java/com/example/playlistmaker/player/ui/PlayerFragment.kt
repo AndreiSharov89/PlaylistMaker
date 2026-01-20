@@ -67,6 +67,9 @@ class PlayerFragment : Fragment() {
         binding.btnLike.setOnClickListener {
             viewModel.onFavoriteClicked()
         }
+
+        viewModel.initFavoriteState()
+        viewModel.checkIsFavorite()
         viewModel.preparePlayer()
 
         viewModel.observeSnackbarMessage().observe(viewLifecycleOwner) { message ->
@@ -123,7 +126,10 @@ class PlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.overlay.alpha = slideOffset + 1
+                binding.overlay.apply {
+                    alpha = slideOffset.coerceIn(0f, 1f)
+                    isVisible = slideOffset > 0f
+                }
             }
         })
 
@@ -204,7 +210,6 @@ class PlayerFragment : Fragment() {
             text = track.country
             isVisible = !text.isNullOrEmpty()
         }
-        renderFavoriteButton(track.isFavorite)
     }
 
     private fun loadCoverImage() {

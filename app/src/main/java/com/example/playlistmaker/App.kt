@@ -32,5 +32,7 @@ class App : Application(), KoinComponent {
         )
 
         PermissionRequester.initialize(applicationContext)
+
+        LocaleHelper.setLocale(this, "ru")
     }
 }

@@ -61,8 +61,8 @@ class SearchFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        adapter = TrackAdapter { track -> onTrackClickDebounced(track) }
-        historyAdapter = TrackAdapter { track -> onTrackClickDebounced(track) }
+        adapter = TrackAdapter(clickListener = { track -> onTrackClickDebounced(track) })
+        historyAdapter = TrackAdapter(clickListener = { track -> onTrackClickDebounced(track) })
 
         binding.rvTrack.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTrack.adapter = adapter
