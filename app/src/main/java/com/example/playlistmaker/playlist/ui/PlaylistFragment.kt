@@ -210,16 +210,10 @@ class PlaylistFragment : Fragment() {
             }
         }
         viewModel.sharePlaylistEvent.observe(viewLifecycleOwner) { shareText ->
-            if (shareText != null) {
                 sharePlaylist(shareText)
-                viewModel.onShareEventHandled()
-            }
         }
-        viewModel.toastEvent.observe(viewLifecycleOwner) { message ->
-            if (message != null) {
-                showSnackbar(message)
-                viewModel.onToastEventHandled()
-            }
+        viewModel.toastEvent.observe(viewLifecycleOwner) { resId ->
+            showSnackbar(getString(resId))
         }
         viewModel.playlistDeleted.observe(viewLifecycleOwner) { isDeleted ->
             if (isDeleted) {

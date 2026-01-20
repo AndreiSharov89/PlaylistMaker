@@ -25,7 +25,7 @@ class EditPlaylistFragment : CreatePlaylistFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewModel.loadPlaylist()
         viewModel.playlist.observe(viewLifecycleOwner) { playlist ->
             binding.playlistName.setText(playlist.name)
             binding.playlistDescription.setText(playlist.description)

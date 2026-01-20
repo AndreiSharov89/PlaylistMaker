@@ -55,5 +55,5 @@
     <string name="save_button_text">Save</string>
     <string name="edit_playlist_tittle">Edit %1$s</string>
     <string name="empty_playlist">Playlist\nis empty</string>
-    <string name="empty_share_playlist">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="no_tracks_to_share">This playlist has no tracks to share</string>
 </resources>

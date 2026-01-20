@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.R
 import com.example.playlistmaker.createplaylist.domain.CreatePlaylistInteractor
 import com.example.playlistmaker.createplaylist.domain.Playlist
 import com.example.playlistmaker.search.domain.Track
+import com.example.playlistmaker.utils.SingleLiveEvent
 import com.example.playlistmaker.utils.formatMinuteCount
 import com.example.playlistmaker.utils.formatTrackCount
 import kotlinx.coroutines.launch
@@ -24,13 +26,13 @@ class PlaylistViewModel(
     private val _tracks = MutableLiveData<List<Track>>()
     val tracks: LiveData<List<Track>> get() = _tracks
 
-    private val _sharePlaylistEvent = MutableLiveData<String?>()
-    val sharePlaylistEvent: LiveData<String?> get() = _sharePlaylistEvent
+    private val _sharePlaylistEvent = SingleLiveEvent<String>()
+    val sharePlaylistEvent: LiveData<String> get() = _sharePlaylistEvent
 
-    private val _toastEvent = MutableLiveData<String?>()
-    val toastEvent: LiveData<String?> get() = _toastEvent
+    private val _toastEvent = SingleLiveEvent<Int>()
+    val toastEvent: LiveData<Int> get() = _toastEvent
 
-    private val _playlistDeleted = MutableLiveData<Boolean>()
+    private val _playlistDeleted = SingleLiveEvent<Boolean>()
     val playlistDeleted: LiveData<Boolean> get() = _playlistDeleted
 
     fun loadPlaylist() {
@@ -62,19 +64,11 @@ class PlaylistViewModel(
         val playlist = _playlistData.value?.first ?: return
         val tracks = _tracks.value ?: return
         if (tracks.isEmpty()) {
-            _toastEvent.postValue("В этом плейлисте нет списка треков, которым можно поделиться")
+            _toastEvent.postValue(R.string.no_tracks_to_share)
             return
         }
         val shareText = buildShareText(playlist, tracks)
         _sharePlaylistEvent.postValue(shareText)
-    }
-
-    fun onShareEventHandled() {
-        _sharePlaylistEvent.value = null
-    }
-
-    fun onToastEventHandled() {
-        _toastEvent.value = null
     }
 
     private fun buildShareText(playlist: Playlist, tracks: List<Track>): String {

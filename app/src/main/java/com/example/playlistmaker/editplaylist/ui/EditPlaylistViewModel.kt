@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.createplaylist.domain.CreatePlaylistInteractor
 import com.example.playlistmaker.createplaylist.domain.Playlist
 import com.example.playlistmaker.createplaylist.ui.CreatePlaylistViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -22,12 +23,22 @@ class EditPlaylistViewModel(
         }
     }
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        _playlistCreated.postValue(null)
+        //no idea in logic, snackbar we broke db?
+    }
     private val _playlist = MutableLiveData<Playlist>()
     val playlist: LiveData<Playlist> = _playlist
 
     override var _selectedCoverUri = MutableLiveData<Uri?>()
     override val selectedCoverUri: LiveData<Uri?> = _selectedCoverUri
 
+    fun loadPlaylist() {
+        viewModelScope.launch(exceptionHandler) {
+            val loadedPlaylist = playlistInteractor.getPlaylistById(playlistId)
+            _playlist.postValue(loadedPlaylist)
+        }
+    }
     fun updatePlaylist(name: String, description: String) {
         val current = _playlist.value ?: return
         if (name.isBlank()) return

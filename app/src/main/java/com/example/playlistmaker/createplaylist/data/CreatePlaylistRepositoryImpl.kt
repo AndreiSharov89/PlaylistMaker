@@ -9,6 +9,7 @@ import com.example.playlistmaker.library.data.TrackDbConverter
 import com.example.playlistmaker.player.data.TrackIntPlaylistDao
 import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.io.File
 import java.io.FileOutputStream
@@ -30,9 +31,11 @@ class CreatePlaylistRepositoryImpl(
     }
 
     override fun getAllPlaylists(): Flow<List<Playlist>> {
-        return playlistDao.getAllPlaylists().map { playlists ->
-            playlists.map { playlistEntity -> playlistDbConverter.map(playlistEntity) }
-        }
+        return playlistDao.getAllPlaylists()
+            .distinctUntilChanged()
+            .map { playlists ->
+                playlists.map { playlistEntity -> playlistDbConverter.map(playlistEntity) }
+            }
     }
 
     override suspend fun getAllPlaylistsNonFlow(): List<Playlist> {
@@ -52,11 +55,12 @@ class CreatePlaylistRepositoryImpl(
     }
 
     override fun getAllTracks(): Flow<List<Track>> {
-        return trackInPlaylistDao.getAllTracks().map { trackEntities ->
-            trackEntities.map { entity ->
-                trackDbConverter.mapFromPlaylistTrack(entity)
-            }
-        }
+        return trackInPlaylistDao.getAllTracks()
+            .map { trackEntities ->
+                trackEntities.map { entity ->
+                    trackDbConverter.mapFromPlaylistTrack(entity)
+                }
+            }.distinctUntilChanged()
     }
 
     override suspend fun getPlaylistById(id: Long): Playlist {
