@@ -20,63 +20,63 @@ class PlayerViewModel(
     private val favoritesInteractor: FavoritesInteractor,
     private val playlistsInteractor: CreatePlaylistInteractor
 ) : ViewModel() {
-    val highResCoverUrl: String = track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-    private val uiStateLiveData = MutableLiveData<PlayerUiState>(PlayerUiState.Preparing)
+
+    val highResCoverUrl: String =
+        track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
+
+    private val uiStateLiveData =
+        MutableLiveData<PlayerUiState>(PlayerUiState.Preparing)
     val observeUiStateLiveData: LiveData<PlayerUiState> = uiStateLiveData
+
     private val addToPlaylistResult = MutableLiveData<AddToPlaylistResult>()
-    fun observeAddToPlaylistResult(): LiveData<AddToPlaylistResult> = addToPlaylistResult
+    fun observeAddToPlaylistResult(): LiveData<AddToPlaylistResult> =
+        addToPlaylistResult
+
     private val playlistsLiveData = MutableLiveData<List<Playlist>>()
     fun observePlaylists(): LiveData<List<Playlist>> = playlistsLiveData
-    private var timerJob: Job? = null
 
     private val snackbarMessageEvent = SingleLiveEvent<String>()
     fun observeSnackbarMessage(): LiveData<String> = snackbarMessageEvent
 
+    private var timerJob: Job? = null
 
     fun preparePlayer() {
-        if (uiStateLiveData.value is PlayerUiState.Content) {
-            return
+        if (uiStateLiveData.value is PlayerUiState.Content) return
+
+        viewModelScope.launch {
+            // 🔹 Get initial favorite state BEFORE first Content emission
+            val isFavorite =
+                favoritesInteractor.isFavorite(track.trackId.toString())
+            track.isFavorite = isFavorite
+
+            player.preparePlayer(
+                url = track.previewUrl.orEmpty(),
+                onReady = {
+                    uiStateLiveData.postValue(
+                        PlayerUiState.Content(
+                            isPlaying = false,
+                            progressText = "00:00",
+                            isFavorite = isFavorite
+                        )
+                    )
+                },
+                onCompletion = {
+                    stopTimer()
+                    uiStateLiveData.postValue(
+                        PlayerUiState.Content(
+                            isPlaying = false,
+                            progressText = "00:00",
+                            isFavorite = isFavorite
+                        )
+                    )
+                }
+            )
         }
-        val previousFavorite =
-            (uiStateLiveData.value as? PlayerUiState.Content)?.isFavorite ?: track.isFavorite
-        val currentIsFavorite =
-            (uiStateLiveData.value as? PlayerUiState.Content)?.isFavorite ?: track.isFavorite
-        player.preparePlayer(
-            url = track.previewUrl ?: "",
-            onReady = {
-                uiStateLiveData.postValue(
-                    PlayerUiState.Content(
-                        isPlaying = false,
-                        progressText = "00:00",
-                        isFavorite = previousFavorite
-                    )
-                )
-            },
-            onCompletion = {
-                stopTimer()
-                uiStateLiveData.postValue(
-                    PlayerUiState.Content(
-                        isPlaying = false,
-                        progressText = "00:00",
-                        isFavorite = currentIsFavorite
-                    )
-                )
-            }
-        )
     }
 
     fun onPlayButtonClicked() {
-        when (val state = uiStateLiveData.value) {
-            is PlayerUiState.Content -> {
-                if (state.isPlaying) {
-                    pausePlayer()
-                } else {
-                    startPlayer()
-                }
-            }
-
-            else -> {}
-        }
+        val state = uiStateLiveData.value as? PlayerUiState.Content ?: return
+        if (state.isPlaying) pausePlayer() else startPlayer()
     }
 
     fun onPause() {
@@ -85,35 +85,21 @@ class PlayerViewModel(
 
     private fun startPlayer() {
         player.start()
-        val currentState = uiStateLiveData.value as? PlayerUiState.Content
-        uiStateLiveData.value = currentState?.copy(
+        val state = uiStateLiveData.value as? PlayerUiState.Content ?: return
+        uiStateLiveData.value = state.copy(
             isPlaying = true,
-            progressText = currentState.progressText.ifEmpty { "00:00" }
+            progressText = state.progressText.ifEmpty { "00:00" }
         )
         startTimer()
     }
 
     private fun pausePlayer() {
-        (observeUiStateLiveData.value as? PlayerUiState.Content)?.let {
-            if (it.isPlaying) {
-                player.pause()
-                stopTimer()
-                uiStateLiveData.value = it.copy(isPlaying = false)
-            }
+        val state = uiStateLiveData.value as? PlayerUiState.Content ?: return
+        if (state.isPlaying) {
+            player.pause()
+            stopTimer()
+            uiStateLiveData.value = state.copy(isPlaying = false)
         }
-    }
-
-    private fun formatTime(ms: Int): String {
-        val totalSeconds = ms / 1000
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
-        return String.format("%02d:%02d", minutes, seconds)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        player.release()
-        timerJob?.cancel()
     }
 
     private fun startTimer() {
@@ -121,15 +107,11 @@ class PlayerViewModel(
         timerJob = viewModelScope.launch {
             while (true) {
                 delay(DELAY)
-                val currentState = uiStateLiveData.value
-                if (currentState is PlayerUiState.Content && currentState.isPlaying) {
-                    val currentPos = player.getCurrentPosition()
-                    uiStateLiveData.value = currentState.copy(
-                        progressText = formatTime(currentPos)
-                    )
-                } else {
-                    break
-                }
+                val state = uiStateLiveData.value as? PlayerUiState.Content
+                if (state?.isPlaying == true) {
+                    uiStateLiveData.value =
+                        state.copy(progressText = formatTime(player.getCurrentPosition()))
+                } else break
             }
         }
     }
@@ -139,13 +121,14 @@ class PlayerViewModel(
     }
 
     fun onFavoriteClicked() {
-        val currentState = uiStateLiveData.value as? PlayerUiState.Content ?: return
-        val newFavoriteStatus = !currentState.isFavorite
-        uiStateLiveData.value = currentState.copy(isFavorite = newFavoriteStatus)
-        track.isFavorite = newFavoriteStatus
+        val state = uiStateLiveData.value as? PlayerUiState.Content ?: return
+        val newFavorite = !state.isFavorite
+
+        uiStateLiveData.value = state.copy(isFavorite = newFavorite)
+        track.isFavorite = newFavorite
 
         viewModelScope.launch {
-            if (newFavoriteStatus) {
+            if (newFavorite) {
                 favoritesInteractor.addTrack(track)
             } else {
                 favoritesInteractor.removeTrack(track)
@@ -155,18 +138,17 @@ class PlayerViewModel(
 
     fun addTrackToPlaylist(playlist: Playlist) {
         viewModelScope.launch {
-            val isAlreadyAdded = playlist.trackIds.contains(track.trackId.toString())
+            val isAlreadyAdded =
+                playlist.trackIds.contains(track.trackId.toString())
 
-            if (isAlreadyAdded) {
-                addToPlaylistResult.postValue(
+            addToPlaylistResult.postValue(
+                if (isAlreadyAdded) {
                     AddToPlaylistResult.AlreadyAdded(playlist.name)
-                )
-            } else {
-                playlistsInteractor.addTracksAndUpdatePlaylist(track, playlist)
-                addToPlaylistResult.postValue(
+                } else {
+                    playlistsInteractor.addTracksAndUpdatePlaylist(track, playlist)
                     AddToPlaylistResult.Added(playlist.name)
-                )
-            }
+                }
+            )
         }
     }
 
@@ -183,27 +165,20 @@ class PlayerViewModel(
         }
     }
 
-    fun checkIsFavorite() {
-        viewModelScope.launch {
-            val isFavorite = favoritesInteractor.isFavorite(track.trackId.toString())
-            track.isFavorite = isFavorite
-
-            val state = uiStateLiveData.value
-            if (state is PlayerUiState.Content) {
-                uiStateLiveData.postValue(state.copy(isFavorite = isFavorite))
-            }
-        }
+    override fun onCleared() {
+        super.onCleared()
+        player.release()
+        timerJob?.cancel()
     }
 
-    fun initFavoriteState() {
-        uiStateLiveData.value = PlayerUiState.Content(
-            isPlaying = false,
-            progressText = "00:00",
-            isFavorite = track.isFavorite
-        )
+    private fun formatTime(ms: Int): String {
+        val minutes = (ms / 1000) / 60
+        val seconds = (ms / 1000) % 60
+        return String.format("%02d:%02d", minutes, seconds)
     }
 
     companion object {
         private const val DELAY = 200L
     }
 }
+

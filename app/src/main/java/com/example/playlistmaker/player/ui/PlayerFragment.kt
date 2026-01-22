@@ -35,7 +35,7 @@ class PlayerFragment : Fragment() {
     }
     private var bottomSheetAdapter: BottomsheetPlaylistAdapter? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
-    val analytics = FirebaseAnalytics.getInstance(requireContext())
+    private val analytics by lazy { FirebaseAnalytics.getInstance(requireContext()) }
 
 
     override fun onCreateView(
@@ -74,8 +74,6 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        viewModel.initFavoriteState()
-        viewModel.checkIsFavorite()
         viewModel.preparePlayer()
 
         viewModel.observeSnackbarMessage().observe(viewLifecycleOwner) { message ->
