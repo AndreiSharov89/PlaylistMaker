@@ -18,6 +18,8 @@ import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.search.domain.Track
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.logEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -33,6 +35,7 @@ class PlayerFragment : Fragment() {
     }
     private var bottomSheetAdapter: BottomsheetPlaylistAdapter? = null
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    val analytics = FirebaseAnalytics.getInstance(requireContext())
 
 
     override fun onCreateView(
@@ -66,6 +69,9 @@ class PlayerFragment : Fragment() {
         binding.btnPlay.setOnClickListener { viewModel.onPlayButtonClicked() }
         binding.btnLike.setOnClickListener {
             viewModel.onFavoriteClicked()
+            analytics.logEvent("Favorites added") {
+                param("Track info:", "${track.artistName} - ${track.trackName}")
+            }
         }
 
         viewModel.initFavoriteState()
@@ -140,6 +146,7 @@ class PlayerFragment : Fragment() {
 
         binding.newPlaylistButton.setOnClickListener {
             findNavController().navigate(R.id.action_playerFragment_to_createPlaylistFragment)
+
         }
     }
 
